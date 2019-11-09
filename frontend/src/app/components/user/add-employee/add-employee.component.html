@@ -1,0 +1,30 @@
+
+<div class="container-fluid">
+  <div class="row">
+    <div style="background: black;padding: 0; min-height: 860px; margin-left: -20px; margin-top:-33px;" class="col-md-2">
+
+      <ul style="margin-top: 25px; margin-left: 20px;" class="list-group">
+        <li class="list-group-item " [class.active]="infoFlag == 1"  (click)="onInfoClick(1)"><button style="background: none; color: white; border: none;" class="btn btn-block ">Basic Info </button></li>
+
+        <li class="list-group-item" [class.active]="infoFlag == 4"><button style="background: none; color: white; border: none;" class="btn btn-block" (click)="onInfoClick(4)">Joining Info</button> </li>
+        <li class="list-group-item" [class.active]="infoFlag == 4"><button style="background: none; color: white; border: none;" class="btn btn-block" (click)="onInfoClick(4)">User Info View</button> </li>
+
+
+      </ul>
+    </div>
+
+
+    <div class="col-md-10">
+      <app-basic-info *ngIf="infoFlag ==1" [empid]="empid"></app-basic-info>
+
+      <app-joining-info *ngIf="infoFlag ==4" [empid]="empid"></app-joining-info>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+

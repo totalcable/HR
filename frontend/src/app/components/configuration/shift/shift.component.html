@@ -1,0 +1,83 @@
+
+<!--modal-->
+<ng-template #content let-c="close" let-d="dismiss" >
+  <div class="modal-header">
+    <h2 class="modal-title">Roaster</h2>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <div class="row">
+      <div class="form-group col-md-6">
+
+        <label>Department</label>
+
+        <ng-multiselect-dropdown
+
+          [data]="departments"
+          [(ngModel)]="selectedDropDown"
+          [settings]="dropdownSettings2"
+          (onSelect)="onItemSelectDepartment($event)"
+          (onDeSelect)="onItemDeSelectDepartment($event)"
+        >
+        </ng-multiselect-dropdown>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Shift Name</label>
+        <input type="text" [(ngModel)]="shiftObj.shiftName" placeholder="Shift" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>In Time</label>
+        <input type="time" [(ngModel)]="shiftObj.inTime" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Out Time</label>
+        <input type="time" [(ngModel)]="shiftObj.outTime" class="form-control">
+      </div>
+      <div class="form-group col-md-12">
+
+        <button class="btn btn-success pull-right" (click)="onSubmit()">Save</button>
+      </div>
+
+
+    </div>
+
+  </div>
+</ng-template>
+
+<!--modal end-->
+<div class="container">
+  <div class="card">
+    <div class="card-header"><h2>All Roaster</h2></div>
+
+    <div class="card-body">
+      <a style=" float: right" class="btn btn-outline-primary mb-2 mr-2" (click)="openLg(content)" >Add New</a>  <br><br>
+      <table datatable  id="example" class="table" [dtOptions]="dtOptions" [dtTrigger]="dtTeigger">
+        <thead>
+        <tr>
+          <th>Department Name</th>
+          <th>Shift Name</th>
+          <th>In Time</th>
+          <th>Out Time</th>
+          <th>Action</th>
+        </tr>
+
+        </thead>
+        <tbody >
+
+        <tr  *ngFor="let shift of shifts" >
+          <td>{{shift.departmentName}}</td>
+          <td>{{shift.shiftName}}</td>
+          <td>{{shift.inTime}}</td>
+          <td>{{shift.outTime}}</td>
+          <td>  <button class="btn btn-info" (click)="edit(shift.shiftId,content)"> Edit</button></td>
+
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

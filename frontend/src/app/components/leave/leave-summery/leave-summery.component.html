@@ -1,0 +1,211 @@
+<!--modal-->
+<!-- The Modal -->
+<div class="modal" id="myModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content ">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Edit</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label>Name</label>
+            <input class="form-control" readonly value="{{employee.firstName+' '+employee.lastName}}">
+          </div>
+          <div class="form-group col-md-6">
+            <label>Start Date</label>
+            <input bsDatepicker
+                   [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"  name="resignDate" [(ngModel)]="employee.startDate" class="form-control input" placeholder="start">
+          </div>
+
+          <div class="form-group col-md-6">
+            <label>End Date</label>
+            <input bsDatepicker
+                   [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"  name="resignDate" [(ngModel)]="employee.endDate" class="form-control input" placeholder="end">
+          </div>
+
+
+          <div class="form-group col-md-6">
+            <label>No Of Days</label>
+            <input type="number" class="form-control input" [(ngModel)]="employee.noOfDays" placeholder="number of days">
+          </div>
+
+          <div class="form-group col-md-6">
+            <label>Leave Category</label>
+            <select class="form-control input" name="fkLeaveCategory" [(ngModel)]="employee.fkLeaveCategory">
+              <option value="" selected>Select Category</option>
+              <option *ngFor="let lc of leaveCategories" [value]="lc.id">
+                {{lc.categoryName}}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label>Remark</label>
+            <textarea class="form-control input" [(ngModel)]="employee.remarks" placeholder="cause"></textarea>
+          </div>
+          <div class="form-group col-md-12">
+            <button class="btn btn-success btn-sm" (click)="updateLeave()">Update</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- The Reject Modal -->
+<div class="modal" id="rejectModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content ">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Reject Comment</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label>Name</label>
+            <input class="form-control" readonly value="{{rejectModel.firstName+' '+rejectModel.lastName}}">
+          </div>
+          <div class="form-group col-md-6">
+            <label>Start Date</label>
+            <input bsDatepicker
+                   [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"  name="resignDate" [(ngModel)]="rejectModel.startDate" class="form-control input" placeholder="start" readonly>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label>End Date</label>
+            <input bsDatepicker
+                   [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"  name="resignDate" [(ngModel)]="rejectModel.endDate" class="form-control input" placeholder="end" readonly>
+          </div>
+
+
+          <div class="form-group col-md-6">
+            <label>No Of Days</label>
+            <input type="number" class="form-control input" [(ngModel)]="rejectModel.noOfDays" placeholder="number of days" readonly>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label>Leave Category</label>
+            <select class="form-control input" name="fkLeaveCategory" [(ngModel)]="rejectModel.fkLeaveCategory" disabled>
+              <option value="" selected>Select Category</option>
+              <option *ngFor="let lc of leaveCategories" [value]="lc.id">
+                {{lc.categoryName}}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label>Remark</label>
+            <textarea class="form-control input" [(ngModel)]="rejectModel.remarks" placeholder="cause" readonly></textarea>
+          </div>
+
+          <div class="form-group col-md-12">
+            <label>Reason Of Rejection</label>
+            <textarea class="form-control input" [(ngModel)]="rejectModel.rejectCause" placeholder="cause"></textarea>
+          </div>
+
+          <div class="form-group col-md-12">
+            <button class="btn btn-success btn-sm" (click)="updateReject()">Reject</button>
+          </div>
+
+
+        </div>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+<div class="container">
+  <div class="card">
+
+    <div class="card-header-pills">
+      <h3 class="col-md-12" align="center"> Showing Approved Leave</h3>
+    </div>
+
+    <div class="card-body">
+      <div class="row">
+        <div class="form-group col-md-3">
+          <label>From</label>
+          <input class="form-control"
+                 bsDatepicker
+                 [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD'}" id="startDate">
+        </div>
+        <div class="form-group col-md-3">
+          <label>To</label>
+          <input class="form-control"
+                 bsDatepicker
+                 [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD'}"
+                 id="endDate"
+          >
+        </div>
+
+
+
+        <div class="form-group col-md-3">
+          <br>
+
+          <button class="btn btn-success" (click)="search()">Search</button>
+        </div>
+
+      </div>
+
+
+
+
+
+
+
+      <table datatable class="table table-striped table-bordered" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+        <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Casual</th>
+          <th>Sick</th>
+          <th>Leave without pay</th>
+          <th>Marrige</th>
+          <th>Earn</th>
+          <th>Maternity</th>
+          <th>Paternity</th>
+          <th>Anual</th>
+          <th>Total</th>
+          <th>Action</th>
+
+        </tr>
+        </thead>
+
+        <tbody>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+</div>

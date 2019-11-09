@@ -1,0 +1,72 @@
+
+<div class="card">
+
+  <div class="card-body">
+
+    <div class="row">
+
+      <div class="form-group col-md-3">
+        <label>Start Date</label>
+        <input bsDatepicker
+               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"  name="resignDate" id="startDate" (bsValueChange)="rerender()" class="form-control input">
+      </div>
+
+      <div class="form-group col-md-3">
+        <label>End Date</label>
+        <input bsDatepicker
+               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" (bsValueChange)="rerender()" id="endDate" name="resignDate"  class="form-control input">
+      </div>
+
+      <div  class="form-group col-md-3">
+        <label>Status</label>
+        <select (change)="rerender()" id="ExtraWorkStatus" class="form-control">
+          <option selected value="">select option</option>
+          <option value="Pending">Pending</option>
+          <option value="Taken">Taken</option>
+          <option value="Unavailable">Unavailable</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-12">
+
+        <button class="btn btn-success pull-left" (click)="calculateAdjustment()">Calculate</button>
+      </div>
+
+
+
+
+    </div>
+
+  </div>
+
+
+  <div class="card-body">
+
+    <table datatable class="table table-striped table-bordered" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Days</th>
+        <th>Purpose</th>
+        <th>Status</th>
+        <th>Created at</th>
+
+
+
+
+      </tr>
+      </thead>
+
+      <tbody>
+
+      </tbody>
+
+    </table>
+
+
+
+  </div>
+</div>
+

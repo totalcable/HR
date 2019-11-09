@@ -1,0 +1,336 @@
+<!--modal-->
+<ng-template #content let-c="close" let-d="dismiss" >
+  <div class="modal-header">
+    <h4 class="modal-title">Shift</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modalClose()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+
+
+    <div class="row">
+      <div class="form-group col-md-6">
+        <label>Shift</label>
+<!--        <select class="form-control" name="shift" >-->
+<!--          <option value="">Select Shift</option>-->
+<!--          <option *ngFor="let sh of shift" [value]="sh.shiftId">-->
+<!--            {{sh.shiftName}}->({{sh.inTime}}-{{sh.outTime}} )-->
+<!--          </option>-->
+<!--        </select>-->
+
+        <ng-multiselect-dropdown
+          [placeholder]="'Select Shift'"
+          [data]="shift"
+          [(ngModel)]="shiftObj.shiftId"
+          [settings]="dropdownSettings2"
+          (onSelect)="onItemSelect2($event)"
+          (onDeSelect)="onItemSelect2($event)"
+          (onSelectAll)="onSelectAll2($event)"
+          (onDeSelectAll)="onDeSelectAll2($event)"
+        >
+        </ng-multiselect-dropdown>
+
+      </div>
+      <div class="form-group col-md-6">
+<!--        <label>UserId</label>-->
+        <input type="hidden"  [(ngModel)]="shiftObj.deviceUserId" class="form-control">
+
+      </div>
+      <div class="form-group col-md-6">
+        <label>In Time</label>
+        <input type="time" [(ngModel)]="shiftObj.inTime" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Out Time</label>
+        <input type="time" [(ngModel)]="shiftObj.outTime" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <div class="checkbox">
+          <label><input type="checkbox" (change)="toggleAdjustment($event)" [(ngModel)]="shiftObj.adjustment" >Adjustment</label>
+        </div>
+<!--        <div class="checkbox">-->
+<!--          <label><input type="checkbox" (change)="toggleLeave($event)" [(ngModel)]="shiftObj.leave" >Leave</label>-->
+<!--        </div>-->
+
+      </div>
+
+      <div id="adjustmentDate" *ngIf="AdjustmentCheckBox" class="form-group col-md-6">
+        <label>Adjustment Date</label>
+        <input bsDatepicker
+               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" [(ngModel)]="shiftObj.adjustmentDate" name="adjustmentDate"  autocomplete="off" class="form-control">
+      </div>
+
+
+
+
+      <div style="display: none" class="form-group col-md-6">
+        <label>shift Log Id</label>
+        <input type="text" readonly [(ngModel)]="shiftObj.shiftLogId" class="form-control">
+      </div>
+
+      <div style="display: none" class="form-group col-md-6">
+        <label>EmpId</label>
+        <input type="text" readonly [(ngModel)]="shiftObj.empId" class="form-control">
+
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>date</label>
+
+        <input type="text" readonly [(ngModel)]="shiftObj.date" class="form-control">
+      </div>
+      <div class="form-group col-md-12">
+
+        <button class="btn btn-success pull-right" (click)="changeAssignShift()" >Submit</button>
+      </div>
+
+
+    </div>
+
+  </div>
+</ng-template>
+
+
+
+<ng-template #adjustment let-c="close" let-d="dismiss" >
+  <div class="modal-header">
+    <h4 class="modal-title">Shift</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modalClose()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <div class="row">
+      <div class="form-group col-md-6">
+        <label>Shift</label>
+
+
+        <ng-multiselect-dropdown
+          [placeholder]="'Select Shift'"
+          [data]="shift"
+          [(ngModel)]="shiftObj.shiftId"
+          [settings]="dropdownSettings2"
+          (onSelect)="onItemSelect3($event)"
+          (onDeSelect)="onItemSelect3($event)"
+
+        >
+        </ng-multiselect-dropdown>
+
+      </div>
+      <div class="form-group col-md-6">
+        <label>UserId</label>
+        <input type="text" readonly [(ngModel)]="shiftObj.deviceUserId" class="form-control">
+
+      </div>
+      <div class="form-group col-md-6">
+        <label>In Time</label>
+        <input type="time" [(ngModel)]="shiftObj.inTime" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Out Time</label>
+        <input type="time" [(ngModel)]="shiftObj.outTime" class="form-control">
+      </div>
+
+
+      <div   class="form-group col-md-6">
+        <label>Adjustment Date</label>
+        <input bsDatepicker
+               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" [(ngModel)]="shiftObj.adjustmentDate" name="adjustmentDate"  autocomplete="off" class="form-control">
+      </div>
+
+      <div style="display: none" class="form-group col-md-6">
+        <label>shift Log Id</label>
+        <input type="text" readonly [(ngModel)]="shiftObj.shiftLogId" class="form-control">
+      </div>
+
+      <div style="display: none" class="form-group col-md-6">
+        <label>EmpId</label>
+        <input type="text" readonly [(ngModel)]="shiftObj.empId" class="form-control">
+
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>date</label>
+        <input type="text" readonly [(ngModel)]="shiftObj.date" class="form-control">
+      </div>
+      <div class="form-group col-md-12">
+
+        <button class="btn btn-success pull-right" (click)="submitAdjustment()" >Submit</button>
+      </div>
+
+    </div>
+
+  </div>
+</ng-template>
+
+<ng-template #future let-c="close" let-d="dismiss" >
+  <div class="modal-header">
+    <h4 class="modal-title">Set Future Roaster</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modalClose()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <div class="row">
+
+      <div class="form-group col-md-4">
+        <label>Start Date</label>
+        <input bsDatepicker
+               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"  [(ngModel)]="futureShift.startDate" name="startDate"  autocomplete="off" class="form-control">
+      </div>
+      <div class="form-group col-md-4">
+        <label>End Date</label>
+        <input bsDatepicker
+               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"  [(ngModel)]="futureShift.endDate" name="endDate"  autocomplete="off" class="form-control">
+      </div>
+    </div>
+    <div class="form-group col-md-4">
+      TO
+    </div>
+
+    <div class="row">
+
+        <div class="form-group col-md-4">
+          <label>Start Date</label>
+          <input bsDatepicker
+                 [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"   [(ngModel)]="futureShift.futureStartDate" name="startDate"  autocomplete="off" class="form-control">
+        </div>
+        <div class="form-group col-md-4">
+          <label>End Date</label>
+          <input bsDatepicker
+                 [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"  [(ngModel)]="futureShift.futureEndDate" name="endDate" autocomplete="off" class="form-control">
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="form-group col-md-4">
+          <button class="btn btn-success btn-sm" style="margin-top: 30px" (click)="submitFuture()">Update</button>
+        </div>
+
+    </div>
+
+
+  </div>
+</ng-template>
+
+
+
+<!--modal end-->
+
+<div class="container-fluid">
+  <div class="card">
+    <div class="card-header"><h2>Roaster Assign</h2></div>
+
+    <div class="card-body">
+      <div class="row">
+
+        <div class="form-group col-md-4">
+
+
+        <label>Employee</label>
+
+          <ng-multiselect-dropdown
+            [placeholder]="'Select Employee'"
+            [data]="employee"
+            [(ngModel)]="selectedItems"
+            [settings]="dropdownSettings"
+            (onSelect)="onItemSelect($event)"
+            (onDeSelect)="onItemDeSelect($event)"
+
+
+          >
+          </ng-multiselect-dropdown>
+
+
+        </div>
+
+        <div class="form-group col-md-4">
+          <label>Start Date</label>
+          <input bsDatepicker
+                 [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"  name="startDate" [(ngModel)]="startDate" autocomplete="off" class="form-control">
+        </div>
+        <div class="form-group col-md-4">
+          <label>End Date</label>
+          <input bsDatepicker
+                 [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"  name="endDate" [(ngModel)]="endDate" autocomplete="off" class="form-control">
+        </div>
+
+
+        <div class="form-group col-md-4">
+          <button class="btn btn-success btn-sm" style="margin-top: 30px" (click)="findAttendence()">Find</button>
+        </div>
+        <div class="form-group col-md-4">
+          <button class="btn btn-success btn-sm" style="margin-top: 30px" (click)="viewFutureRosterForm(future)">Set Future Roster</button>
+        </div>
+
+
+
+      </div>
+
+        <div class="row" *ngIf="assignedLog?.length >0">
+
+          <div class="form-group col-md-12">
+            <label style="text-align: center">Assigned shift</label>
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <tr>
+                  <th>Date</th>
+                  <th>Day</th>
+                  <th>Time</th>
+                  <th>Adjustment</th>
+                  <th>Weekend</th>
+                  <th>Holiday</th>
+                  <th>Action</th>
+                </tr>
+
+                <tr *ngFor="let asgL of assignedLog; let i = index">
+                  <td>
+                    {{asgL['date']}}
+                  </td>
+                  <td>
+                    {{asgL['day']}}
+                  </td>
+                  <td>
+                    {{asgL['shiftName']}}
+                  </td>
+                  <td>
+                    {{asgL['adjustmentDate']}}
+                  </td>
+                  <td >
+                    <p *ngIf="asgL['weekend']" style="color: red">{{asgL['weekend']}}</p>
+                  </td>
+                  <td >
+                    <p *ngIf="asgL['holiday']" style="color: blue">{{asgL['holiday']}}</p>
+                  </td>
+
+                  <td>
+
+                    <button *ngIf="!asgL['shiftLogId']" class="btn btn-info" (click)="edit(asgL['shiftLogId'],asgL['date'],asgL['empId'],content)">Add</button> &nbsp;&nbsp;
+                    <button *ngIf="asgL['shiftLogId']" class="btn btn-info" (click)="editShiftLog(asgL['shiftLogId'],asgL['date'],asgL['empId'],content)">Edit</button> &nbsp;&nbsp;
+
+                    <button class="btn btn-info" *ngIf="!notAssignedView" (click)="confirmDelete(asgL['shiftLogId'],asgL['date'],asgL['empId'])"> Delete</button> &nbsp;
+                    <button class="btn btn-info" *ngIf="!notAssignedView" (click)="AdjustmentShiftLog(asgL['shiftLogId'],asgL['date'],asgL['empId'],adjustment)"> Adjustment</button>&nbsp;&nbsp;
+                    <button class="btn btn-info" *ngIf="!asgL['weekend']" (click)="weekend(asgL['shiftLogId'],asgL['date'],asgL['empId'],'Add')">Add Weekend</button>&nbsp;&nbsp;
+                    <button class="btn btn-info" *ngIf="asgL['weekend']" (click)="weekend(asgL['shiftLogId'],asgL['date'],asgL['empId'],'Remove')">remove Weekend</button>&nbsp;&nbsp;
+                    <button class="btn btn-info" *ngIf="!asgL['holiday']" (click)="holiday(asgL['shiftLogId'],asgL['date'],asgL['empId'],'Add')">Add Holiday</button>&nbsp;&nbsp;
+                    <button class="btn btn-info" *ngIf="asgL['holiday']" (click)="holiday(asgL['shiftLogId'],asgL['date'],asgL['empId'],'Remove')">remove Holiday</button>&nbsp;&nbsp;
+
+                  </td>
+
+                </tr>
+
+              </table>
+            </div>
+          </div>
+        </div>
+
+
+    </div>
+  </div>
+
+
+</div>

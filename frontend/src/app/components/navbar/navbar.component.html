@@ -1,0 +1,254 @@
+
+<!--modal-->
+<ng-template #passwordChange let-c="close" let-d="dismiss" >
+  <div class="modal-header">
+    <h2 class="modal-title">Password Change</h2>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+
+
+      <div class="row">
+
+<!--        <div class="form-group col-md-12">-->
+<!--          <label>Old Password</label>-->
+<!--          <input class="form-control" id="old_password" name="password" type="password" placeholder="Old Password" >-->
+<!--        </div>-->
+
+        <div class="form-group col-md-6">
+
+          <label>New Password</label>
+          <input class="form-control" id="new_password" name="new_password" type="password" placeholder="New Password">
+        </div>
+        <div class="form-group col-md-6">
+
+          <label>Confirm New Password</label>
+          <input class="form-control" id="confirm_new_password" name="confirm_new_password" type="password" placeholder="Confirm New Password">
+        </div>
+
+        <div class="form-group col-md-12">
+
+          <button class="btn btn-success pull-left" (click)="submitPasswordChange()" >Submit</button>
+
+        </div>
+
+
+
+      </div>
+
+
+
+
+  </div>
+</ng-template>
+
+
+<!-- Navigation Bar-->
+<header id="topnav" *ngIf="nav.visible">
+  <div class="topbar-main">
+    <div class="container-fluid">
+
+      <div class="logo">
+
+        <a routerLink="/home" class="logo">
+          <h3>HR</h3>
+        </a>
+
+      </div>
+
+      <div class="menu-extras topbar-custom">
+
+
+        <ul class="list-inline float-right mb-0">
+
+
+          <li class="list-inline-item dropdown notification-list">
+            <a class="nav-link dropdown-toggle arrow-none waves-effect nav-user" data-toggle="dropdown" href="#" role="button"
+               aria-haspopup="false" aria-expanded="false">
+              <img src="assets/images/users/avatar-1.jpg" alt="user" class="rounded-circle">
+            </a>
+            <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
+              <a class="dropdown-item" href="#"><i class="dripicons-user text-muted"></i> Profile</a>
+              <a class="dropdown-item" style="cursor: pointer" (click)="ChangePass(passwordChange)">Password Change</a>
+<!--              <a class="dropdown-item" href="#"><i class="dripicons-wallet text-muted"></i> My Wallet</a>-->
+<!--              <a class="dropdown-item" href="#"><span class="badge badge-success pull-right m-t-5">5</span><i class="dripicons-gear text-muted"></i> Settings</a>-->
+<!--              <a class="dropdown-item" href="#" (click)="whoAmI($event)"><i class="dripicons-lock text-muted"></i> Who Am I</a>-->
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" style="cursor: pointer" (click)="logout($event)"><i class="dripicons-exit text-muted"></i> Logout</a>
+            </div>
+          </li>
+          <li class="menu-item list-inline-item">
+            <!-- Mobile menu toggle-->
+            <a class="navbar-toggle nav-link">
+              <div class="lines">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </a>
+            <!-- End mobile menu toggle-->
+          </li>
+
+        </ul>
+      </div>
+      <!-- end menu-extras -->
+
+      <div class="clearfix"></div>
+
+    </div> <!-- end container -->
+  </div>
+  <!-- end topbar-main -->
+
+  <!-- MENU Start -->
+  <div class="navbar-custom">
+    <div class="container-fluid">
+      <div id="navigation">
+        <!-- Navigation Menu-->
+        <ul class="navigation-menu">
+
+          <li class="has-submenu" routerLinkActive="active">
+            <a routerLink="/home" ><i class="ti-home"></i>Dashboard</a>
+          </li>
+          <li class="has-submenu" *ngxPermissionsOnly="['admin']" routerLinkActive="active">
+            <a ><i class="ti-home"></i>User</a>
+            <ul class="submenu">
+              <li class="has-submenu">
+                <a href="#">Employee</a>
+                <ul class="submenu">
+                  <li><a routerLink="employee" >Employee</a></li>
+                  <!--                  <li><a routerLink="employee/past">Past Employee</a></li>-->
+                  <!--                  <li><a routerLink="employee/add">Add Employee</a></li>-->
+                </ul>
+              </li>
+            </ul>
+          </li>
+
+          <li class="has-submenu" *ngxPermissionsOnly="['admin']" routerLinkActive="active">
+            <a href="#"><i class="ti-bookmark-alt"></i>Settings</a>
+            <ul class="submenu">
+              <li class="has-submenu">
+                <a href="#">Roster</a>
+                <ul class="submenu">
+                  <li><a routerLink="configuration/shift">All Roster</a></li>
+<!--                  <li><a routerLink="configuration/shift/assign">Shift Roster</a></li>-->
+                  <li><a routerLink="configuration/shift/edit-assign">Roster Assign</a></li>
+                  <li><a routerLink="configuration/roster/dept-wise-static-roster">department wise Static Roster</a></li>
+                  <li><a routerLink="configuration/roster/dept-wise-assign">department wise Roster Assign</a></li>
+                  <li><a routerLink="configuration/not-shift-assigned-list">Roster not Assigned list</a></li>
+
+                </ul>
+              </li>
+
+              <li *ngxPermissionsOnly="['admin']" routerLinkActive="active"><a routerLink="configuration/punch-time/edit">Punch Time Customaization</a></li>
+
+              <li class="has-submenu" *ngxPermissionsOnly="['admin']">
+                <a href="#">Department</a>
+                <ul class="submenu">
+                  <li><a routerLink="configuration/department/add">Add Department</a></li>
+                </ul>
+              </li>
+
+              <li class="has-submenu" *ngxPermissionsOnly="['admin']">
+                <a href="#">Email</a>
+                <ul class="submenu">
+                  <li><a routerLink="configuration/email/add">Add Email</a></li>
+                </ul>
+              </li>
+
+              <li class="has-submenu" *ngxPermissionsOnly="['admin']">
+                <a href="#">Designation</a>
+                <ul class="submenu">
+                  <li><a routerLink="configuration/designation/add">Add Designation</a></li>
+
+
+                </ul>
+              </li>
+               <li><a *ngxPermissionsOnly="['admin']" routerLink="configuration/employee/passwordChange">Change Password</a></li>
+               <li><a *ngxPermissionsOnly="['admin']" style="cursor: pointer" (click)="databaseDownload()" >Download Database</a></li>
+
+
+
+
+
+
+
+            </ul>
+          </li>
+
+
+          <li class="has-submenu" *ngxPermissionsOnly="['admin']" routerLinkActive="active">
+            <a href="#"><i class="fa fa-chart"></i>Report</a>
+            <ul class="submenu">
+              <li class="">
+                <a routerLink="report/attendance">Attendance</a>
+
+              </li>
+            </ul>
+          </li>
+
+          <li  class="has-submenu">
+            <a href="#">Leave</a>
+            <ul class="submenu">
+              <li><a *ngxPermissionsExcept="['admin']" routerLink="leave/apply" >Apply Leave</a></li>
+              <li><a routerLink="configuration/leave" *ngxPermissionsOnly="['admin']">Create Leave</a></li>
+              <li><a routerLink="configuration/leave/show" *ngxPermissionsOnly="['admin','Manager','Hr']">Show Leave</a></li>
+              <li><a routerLink="leave/summery">Leave Summery</a></li>
+
+            </ul>
+          </li>
+          <li class="has-submenu">
+            <a href="#">Govt Holiday</a>
+            <ul class="submenu">
+<!--              <li><a routerLink="leave/apply">Apply Leave</a></li>-->
+<!--              <li><a routerLink="configuration/govtHoliday" *ngxPermissionsOnly="['admin']">Create Holiday</a></li>-->
+              <li><a routerLink="configuration/govtHoliday/show" >Show Holiday</a></li>
+
+            </ul>
+          </li>
+
+          <li *ngxPermissionsOnly="['admin']" class="has-submenu">
+            <a >Adjustment</a>
+            <ul class="submenu">
+              <li><a routerLink="adjustment/showAdjustment">Show Adjustment</a></li>
+
+            </ul>
+          </li>
+
+          <li class="has-submenu">
+            <a >Swap</a>
+            <ul class="submenu">
+              <li><a *ngxPermissionsOnly="['admin','Manager','Hr']"  routerLink="swap/showSwap">Show Swap</a></li>
+              <li><a *ngxPermissionsOnly="['admin','Manager','Hr']"  routerLink="swap/showTimeSwap">Show Time Swap</a></li>
+              <li><a routerLink="swap/RequestSwap">Request Swap</a></li>
+
+            </ul>
+          </li>
+
+
+
+          <!--<li class="has-submenu">-->
+            <!--<a href="#"><i class="ti-files"></i>Pages</a>-->
+            <!--<ul class="submenu megamenu">-->
+              <!--<li>-->
+                <!--<ul>-->
+                  <!--<li><a routerLink="/login">Login</a></li>-->
+                <!--</ul>-->
+              <!--</li>-->
+            <!--</ul>-->
+          <!--</li>-->
+
+        </ul>
+        <!-- End navigation menu -->
+      </div> <!-- end #navigation -->
+    </div> <!-- end container -->
+  </div> <!-- end navbar-custom -->
+
+
+
+
+</header>
+<!-- End Navigation Bar-->
+

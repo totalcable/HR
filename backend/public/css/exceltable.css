@@ -1,0 +1,16 @@
+/*table, th, td {*/
+    /*border: 2px solid ;*/
+/*}*/
+.Border{
+    border: 2px solid ;
+    background-color: #BDD7EE;
+}
+.cell{
+    text-align: center;vertical-align: middle;
+}
+.late{
+
+    color: #FF0000;
+}
+
+

@@ -1,0 +1,225 @@
+<div class="card">
+  <div class="card-header" style="text-align: center;">
+    <h2>Joining Information </h2>
+    <a style="text-align: right" href="{{previousURL}}">{{previousURL}}</a>
+  </div>
+
+  <div class="card-body">
+    <div *ngFor="let p of error" class="alert alert-secondary" role="alert">
+      {{p}}
+    </div>
+    <div class="row">
+
+      <div class="form-group col-md-2">
+        <label>Designation/Title <span style="color: red">*</span></label>
+        <select class="form-control" (change)="selectDesignation($event.target.value)" [(ngModel)]="employeeJoiningForm.designation" required>
+          <option value="">Select Designation</option>
+          <option *ngFor="let desg of designation" [value]="desg.id">
+            {{desg.title}}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Employee Id <span style="color: red">*</span></label>
+        <input type="text" name="accessPin" placeholder="Employee Id" [(ngModel)]="employeeJoiningForm.attDeviceUserId" class="form-control">
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Supervisor</label>
+        <input type="text" name="supervisor" placeholder="Supervisor Name" [(ngModel)]="employeeJoiningForm.supervisor" class="form-control">
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Department <span style="color: red">*</span></label>
+        <select class="form-control" (change)="selectDepartment($event.target.value)"  [(ngModel)]="employeeJoiningForm.department" required>
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of department" [value]="dept.id">
+            {{dept.departmentName}}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Working Location <span style="color: red">*</span></label>
+        <input type="text" name="workingLocation" placeholder="Working Location" [(ngModel)]="employeeJoiningForm.workingLocation" class="form-control">
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Email Office </label>
+        <input type="text" name="email_off" placeholder="Email Office" [(ngModel)]="employeeJoiningForm.email_off" class="form-control">
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Blood Group</label>
+        <select class="form-control" [(ngModel)]="employeeJoiningForm.bloodGroup">
+          <option value=" ">Select Blood Group</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+        </select>
+      </div>
+
+
+      <div class="form-group col-md-2">
+        <label>Cell Phone <span style="color: red">*</span></label>
+        <input type="text" class="form-control" name="contactNo" placeholder="Cell Phone" [(ngModel)]="employeeJoiningForm.contactNo" required>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Start Date</label>
+
+        <input class="form-control"
+               bsDatepicker
+               [(ngModel)]="employeeJoiningForm.actualJoinDate"
+               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD'}">
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Status <span style="color: red">*</span></label>
+        <select class="form-control" [(ngModel)]="employeeJoiningForm.fkActivationStatus">
+          <option value="1">Active</option>
+          <option value="2">Inactive</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Probation Period</label>
+        <input type="text" name="probationPeriod" placeholder="Month" [(ngModel)]="employeeJoiningForm.probationPeriod" class="form-control">
+      </div>
+
+      <div class="form-group col-md-2">
+
+        <!--<input type="text" name="weekend" placeholder="day" [(ngModel)]="employeeJoiningForm.weekend" class="form-control">-->
+        <label>Weekend</label>
+        <ng-multiselect-dropdown
+          [placeholder]="'Select Weekend'"
+          [data]="dropdownList"
+          [(ngModel)]="selectedItems"
+          [settings]="dropdownSettings">
+        </ng-multiselect-dropdown>
+      </div>
+
+<!--      <div class=" form-group col-md-2">-->
+<!--        <label >Employee Id Card no</label>-->
+<!--        <input type="text"  name="employeeId" class="form-control" placeholder="employee id" [(ngModel)]="employeeJoiningForm.employeeId" required>-->
+<!--      </div>-->
+
+      <div class="form-group col-md-2">
+        <label>Attendance In Device<span style="color: red">*</span></label>
+        <input type="text" name="accessPin" placeholder="In Device Number" [(ngModel)]="employeeJoiningForm.inDeviceNo" class="form-control">
+      </div>
+      <div class="form-group col-md-2">
+        <label>Attendance Out Device<span style="color: red">*</span></label>
+        <input type="text" name="accessPin" placeholder="Out Device Number" [(ngModel)]="employeeJoiningForm.outDeviceNo" class="form-control">
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Employee Type <span style="color: red">*</span></label>
+        <select class="form-control" name="fkEmployeeType" [(ngModel)]="employeeJoiningForm.empType" required>
+          <option value="">Select Employee Type</option>
+          <option *ngFor="let type of empType" [value]="type.id">
+            {{type.typeTitle}}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Salary<span style="color: red">*</span></label>
+        <input type="text" name="salary" placeholder="Salary" [(ngModel)]="employeeJoiningForm.salary" class="form-control" required>
+      </div>
+
+
+      <div class="form-group col-md-12">
+      <div class="card-header" style="text-align: center;">
+        <h2>Emergency Contact Information </h2>
+      </div>
+      </div>
+
+      <div class="form-group col-md-4">
+        <label>Full Name <span style="color: red">*</span></label>
+        <input type="text" class="form-control" name="e_name" placeholder="Full Name" [(ngModel)]="employeeJoiningForm.e_name" required>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Street Address <span style="color: red">*</span></label>
+        <input type="text" class="form-control" name="e_street_address" placeholder="Street Address" [(ngModel)]="employeeJoiningForm.e_street_address" required>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Apartment/Unit# <span style="color: red">*</span></label>
+        <input type="text" class="form-control" name="e_apartment_unit" placeholder="Apartment/Unit" [(ngModel)]="employeeJoiningForm.e_apartment_unit" required>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>City <span style="color: red">*</span></label>
+        <input type="text" class="form-control" name="e_city" placeholder="City" [(ngModel)]="employeeJoiningForm.e_city" required>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>State <span style="color: red">*</span></label>
+        <input type="text" class="form-control" name="e_state" placeholder="State" [(ngModel)]="employeeJoiningForm.e_state" required>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Zip Code <span style="color: red">*</span></label>
+        <input type="text" class="form-control" name="e_zip_code" placeholder="Zip Code" [(ngModel)]="employeeJoiningForm.e_zip_code" required>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Primary Phone <span style="color: red">*</span></label>
+        <input type="text" class="form-control" name="e_phone" placeholder="Primary Phone" [(ngModel)]="employeeJoiningForm.e_phone" required>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Alternate Phone <span style="color: red">*</span></label>
+        <input type="text" class="form-control" name="e_alternate_phone" placeholder="Alternate Phone" [(ngModel)]="employeeJoiningForm.e_alternate_phone" required>
+      </div>
+
+      <div class="form-group col-md-2">
+        <label>Relationship <span style="color: red">*</span></label>
+        <input type="text" class="form-control" name="e_relationship" placeholder="Relationship" [(ngModel)]="employeeJoiningForm.e_relationship" required>
+      </div>
+
+      <div class="form-group col-md-2" style="color: red;">
+        <label>Resign Date</label>
+        <input bsDatepicker
+               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"  name="resignDate" [(ngModel)]="employeeJoiningForm.resignDate" class="form-control">
+      </div>
+
+
+      <div class="col-md-12">
+        <button class="btn btn-success" (click)="submit()">Save</button>
+      </div>
+
+      <!--Leave Limit-->
+      <div class="form-group col-md-12">
+        <h3 align="center">Leave Limit</h3>
+        <hr>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Total Leave</label>
+        <input type="text" [(ngModel)]="totalLeaveAssigned"  placeholder="Lotal Leave" class="form-control">
+      </div>
+
+
+      <div class="form-group col-md-6">
+        <label>Leave Taken</label>
+        <input type="number" [(ngModel)]="leaveTaken"  placeholder="Total Leave Taken" class="form-control" readonly>
+      </div>
+
+
+
+      <div class="col-md-12">
+        <button class="btn btn-success" (click)="submitLeaveLimit()" >Save Leave Limit</button>
+      </div>
+
+    </div>
+  </div>
+</div>

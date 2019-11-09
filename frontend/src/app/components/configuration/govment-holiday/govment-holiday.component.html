@@ -1,0 +1,185 @@
+
+<!--Add New Govment Holiday Modal-->
+<ng-template #addGovtHoliday let-c="close" let-d="dismiss" >
+  <div class="modal-header">
+    <h2 class="modal-title">Add Govment Holiday</h2>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <input type="hidden" [(ngModel)]="govtHolidayObj.id" placeholder="Holiday Name" class="form-control">
+
+    <div class="row">
+      <div class="form-group col-md-12">
+        <label>Name</label>
+        <input type="text" [(ngModel)]="govtHolidayObj.holidayName" placeholder="Holiday Name" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Start Date</label>
+        <input type="text" bsDatepicker
+               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD'}" [(ngModel)]="govtHolidayObj.startDate" placeholder="Start Date" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>End Date</label>
+        <input type="text" bsDatepicker
+               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD'}" [(ngModel)]="govtHolidayObj.endDate" placeholder="End Date" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Number of Days</label>
+        <input type="text"  [(ngModel)]="govtHolidayObj.noOfDays" placeholder="End Date" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Status</label>
+        <select [(ngModel)]="govtHolidayObj.status" class="form-control">
+          <option  value="">Select Option</option>
+          <option selected value="Approved">Approved</option>
+          <option value="Pending">Pending</option>
+          <option value="Rejected">Rejected</option>
+
+        </select>
+      </div>
+      <div class="form-group col-md-12">
+        <label>Purpose</label>
+        <textarea  [(ngModel)]="govtHolidayObj.purpose" placeholder="Shift" class="form-control"></textarea>
+      </div>
+
+      <div class="form-group col-md-12">
+
+        <button class="btn btn-success pull-right" (click)="insertGovtHoliday()">Submit</button>
+      </div>
+
+
+    </div>
+
+  </div>
+</ng-template>
+
+<!-- Update Govment Holiday Modal-->
+<ng-template #editGovtHoliday let-c="close" let-d="dismiss" >
+  <div class="modal-header">
+    <h4 class="modal-title">Update Govment Holiday </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <div class="row">
+      <div class="form-group col-md-12">
+        <label>Name</label>
+        <input type="text" [(ngModel)]="govtHolidayObj.holidayName" placeholder="Holiday Name" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Start Date</label>
+        <input type="text" bsDatepicker
+               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD'}" [(ngModel)]="govtHolidayObj.startDate" placeholder="Start Date" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>End Date</label>
+        <input type="text" bsDatepicker
+               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD'}" [(ngModel)]="govtHolidayObj.endDate" placeholder="End Date" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Number of Days</label>
+        <input type="text"  [(ngModel)]="govtHolidayObj.noOfDays" placeholder="End Date" class="form-control">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Status</label>
+        <select [(ngModel)]="govtHolidayObj.status" class="form-control">
+          <option  value="">Select Option</option>
+          <option selected value="Approved">Approved</option>
+          <option value="Pending">Pending</option>
+          <option value="Rejected">Rejected</option>
+
+        </select>
+      </div>
+      <div class="form-group col-md-12">
+        <label>Purpose</label>
+        <textarea  [(ngModel)]="govtHolidayObj.purpose" placeholder="Shift" class="form-control"></textarea>
+      </div>
+
+      <div class="form-group col-md-12">
+
+        <button class="btn btn-success pull-right" (click)="updateGovtHoliday()">Submit</button>
+      </div>
+
+
+    </div>
+
+  </div>
+</ng-template>
+
+
+<!-- Govment Holidays Information-->
+<div class="card">
+  <div class="card-header">
+    <h2>Govment Holidays Information</h2>
+    <a style=" float: right" *ngIf="editShow" class="btn btn-outline-primary mb-2 mr-2" (click)="addModal(addGovtHoliday)" >Add New</a>
+  </div>
+
+  <div class="card-body">
+
+    <div class="row">
+
+      <div class="form-group col-md-3">
+        <label>Start Date</label>
+        <input bsDatepicker
+               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"  name="resignDate" id="startDate" (bsValueChange)="rerender()" class="form-control input">
+      </div>
+
+      <div class="form-group col-md-3">
+        <label>End Date</label>
+        <input bsDatepicker
+               [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" (bsValueChange)="rerender()" id="endDate" name="resignDate"  class="form-control input">
+      </div>
+
+      <div  class="form-group col-md-3">
+        <label>Status</label>
+        <select (change)="rerender()" id="HolidayStatus" class="form-control">
+        <option selected value="">Select Option</option>
+        <option value="Approved">Approved</option>
+        <option value="Pending">Pending</option>
+        <option value="Rejected">Rejected</option>
+        </select>
+      </div>
+
+
+
+
+    </div>
+
+  </div>
+
+  <div class="card-body">
+
+    <table datatable class="table table-striped table-bordered" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Days</th>
+        <th>Purpose</th>
+        <th>Status</th>
+        <th>Created By</th>
+
+        <th *ngIf="editShow">Action</th>
+
+
+
+      </tr>
+      </thead>
+
+      <tbody>
+
+      </tbody>
+
+    </table>
+
+
+
+  </div>
+</div>
+

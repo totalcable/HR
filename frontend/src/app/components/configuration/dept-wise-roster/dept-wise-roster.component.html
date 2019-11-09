@@ -1,0 +1,162 @@
+
+<div class="container-fluid">
+  <div class="card">
+    <div class="card-header"><h2>Department Wise Roster</h2> <h4>Multiple Roster Departments</h4></div>
+
+    <div class="card-body">
+      <div class="row">
+        <div class="form-group col-md-3">
+          <label>Date</label>
+          <input class="form-control"
+                 bsDatepicker
+                (bsValueChange)="change($event)"
+                 [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD'}" id="Date">
+        </div><br>
+
+        <div class="form-group col-md-4">
+          <label> &nbsp;</label>
+          <ng-multiselect-dropdown
+            [placeholder]="'Select Department'"
+            [data]="departments"
+            [(ngModel)]="selectedDropDown"
+            [settings]="dropdownSettings2"
+            (onSelect)="onItemSelectDepartment($event)"
+            (onDeSelect)="onItemDeSelectDepartment($event)"
+
+          >
+          </ng-multiselect-dropdown>
+        </div>
+
+        <div class="form-group col-md-4">
+          <label>Roster Info</label>
+          <select class="form-control" id="RosterInfo" (change)="rosterChange()" name="RosterInfo">
+            <option value="">Select Roster</option>
+            <option *ngFor="let RI of RosterInfo" value="{{RI.shiftId}}">{{RI.shiftName}}</option>
+
+          </select>
+        </div>
+
+        <br>
+
+      </div>
+
+      <div class="row">
+
+        <div class="form-group col-md-3 ">
+
+          <button *ngIf="staticVisibility" class="btn btn-success" (click)="searchRoster()" style="margin-top: 25px;">Search from Static</button> &nbsp;&nbsp;
+          <button *ngIf="oldRosterVisibility" class="btn btn-danger" (click)="findSetRoster()" style="margin-top: 25px;">Search from Set Roster</button>
+        </div>
+
+
+
+
+      </div>
+
+    </div>
+
+    <div *ngIf="showTable" class="card-body">
+      <div class="row">
+        <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>duty Employee</th>
+                <th>Off Duty Employee</th>
+
+              </tr>
+
+            </thead>
+          <tbody>
+            <tr>
+
+              <td>
+                <ng-multiselect-dropdown
+                  [placeholder]="'Select Employees'"
+                  [data]="employees"
+                  [(ngModel)]="selectedDropDownEmpduty"
+                  [settings]="dropdownSettingsEmpduty"
+                  (onSelect)="onItemSelect($event)"
+                  (onDeSelect)="onItemDeSelect($event)"
+
+                >
+                </ng-multiselect-dropdown>
+              </td>
+              <td>
+                <ng-multiselect-dropdown
+                  [placeholder]="'Select Employees'"
+                  [data]="employees"
+                  [(ngModel)]="selectedDropDownEmpOffduty"
+                  [settings]="dropdownSettingsEmpOffduty"
+                  (onSelect)="onItemSelectEmpOffduty($event)"
+                  (onDeSelect)="onItemDeSelectEmpOffduty($event)"
+
+                >
+                </ng-multiselect-dropdown>
+              </td>
+
+            </tr>
+          <tr>
+            <td colspan="2">
+
+                <button class="btn btn-success" (click)="submitRoster()" style="margin-top: 25px;">Submit</button>
+
+            </td>
+          </tr>
+          </tbody>
+
+
+
+
+        </table>
+
+      </div>
+
+
+
+    </div>
+    <br>
+    <div *ngIf="showExistingData" class="card-body">
+      <div class="row">
+        <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>duty Employee</th>
+                <th>Off Duty Employee</th>
+                <th>Action</th>
+              </tr>
+
+            </thead>
+          <tbody>
+            <tr>
+
+              <td>
+                <span *ngFor="let ERD of existingRosterData['duty'];">
+                  {{ERD['empFullname']+' ,'}}
+                </span>
+
+              </td>
+              <td>
+                <span *ngFor="let ERD of existingRosterData['Offduty'];">
+                  {{ERD['empFullname']+' ,'}}
+                </span>
+              </td>
+              <td>
+                <button class="btn btn-success" (click)="ChangeRoster()" style="margin-top: 25px;">Change</button>
+              </td>
+
+            </tr>
+
+          </tbody>
+
+
+
+
+        </table>
+
+      </div>
+
+
+
+    </div>
+  </div>
+</div>

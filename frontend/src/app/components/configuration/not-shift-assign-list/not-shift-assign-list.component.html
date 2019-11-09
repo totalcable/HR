@@ -1,0 +1,74 @@
+
+<div class="container-fluid">
+  <div class="card">
+    <div class="card-header"><h2>Roster Not Assigned List</h2></div>
+
+    <div class="card-body">
+      <div class="row">
+
+        <div class="form-group col-md-4">
+          <label>Start Date</label>
+          <input bsDatepicker
+                 [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"  name="startDate" [(ngModel)]="startDate" autocomplete="off" class="form-control">
+        </div>
+        <div class="form-group col-md-4">
+          <label>End Date</label>
+          <input bsDatepicker
+                 [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"  name="endDate" [(ngModel)]="endDate" autocomplete="off" class="form-control">
+        </div>
+
+
+        <div class="form-group col-md-4">
+          <button class="btn btn-success btn-sm" style="margin-top: 30px" (click)="search()">Search</button>
+        </div>
+
+
+
+
+      </div>
+
+      <div class="row" *ngIf="empList?.length >0">
+
+        <div class="form-group col-md-12">
+          <label style="text-align: center">Not Assigned shift</label>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Action</th>
+              </tr>
+
+              <tr *ngFor="let asgL of empList; let i = index">
+                <td>
+                  {{asgL['attDeviceUserId']}}
+                </td>
+                <td>
+                  {{asgL['firstName']}}
+                </td>
+
+                <td>
+
+<!--                  <a  class="btn btn-info" [routerLink]="['/notAssignedinfoPerEmp', asgL['id']]"  (click)="seeNotAssignedShift(asgL['id'])">see</a>-->
+                  <a  class="btn btn-info" [routerLink]="['/notAssignedinfoPerEmp', asgL['id'],asgL['attDeviceUserId'],newS,newE]">see</a>
+
+
+                </td>
+
+              </tr>
+
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+
+    </div>
+  </div>
+
+
+</div>

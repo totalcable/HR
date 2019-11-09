@@ -1,0 +1,204 @@
+<!--modal-->
+<ng-template #content let-c="close" let-d="dismiss" >
+  <div class="modal-header">
+    <h4 class="modal-title">Change Roster</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modalClose()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <div class="row" >
+
+      <div class="form-group col-md-9">
+        <label>Duty Employees</label>
+
+        <ng-multiselect-dropdown
+          [placeholder]="'Select Employees'"
+          [data]="employees"
+          [(ngModel)]="selectedDropDownEmp"
+          [settings]="dropdownSettingsEmp"
+          (onSelect)="onSelect($event)"
+          (onDeSelect)="onSelect($event)"
+
+        >
+        </ng-multiselect-dropdown>
+
+      </div>
+      <div class="form-group col-md-9">
+        <label>day off</label>
+
+        <ng-multiselect-dropdown
+          [placeholder]="'Select Employees'"
+          [data]="employees"
+          [(ngModel)]="selectedDropDownoffDutyEmp"
+          [settings]="dropdownSettingsEmp"
+          (onSelect)="onSelect($event)"
+          (onDeSelect)="onSelect($event)"
+
+        >
+        </ng-multiselect-dropdown>
+
+      </div>
+
+
+    </div>
+    <div class="row" >
+
+      <div class="form-group col-md-9">
+
+        <button class="btn btn-success" (click)="updateRoster()" style="margin-top: 25px;">update</button>
+
+      </div>
+
+
+    </div>
+
+  </div>
+</ng-template>
+
+
+<div class="container-fluid">
+  <div class="card">
+    <div class="card-header"><h2>Department Wise Roster</h2> <h4>Multiple Roster Departments</h4></div>
+
+
+    <div class="card-body">
+      <div class="row">
+
+
+        <div class="form-group col-md-4">
+          <label>Department</label>
+          <ng-multiselect-dropdown
+            [placeholder]="'Select Department'"
+            [data]="departments"
+            [(ngModel)]="selectedDropDown"
+            [settings]="dropdownSettings2"
+
+          >
+          </ng-multiselect-dropdown>
+        </div>
+        <br>
+
+      </div>
+
+      <div class="row">
+
+        <div class="form-group col-md-3 ">
+
+          <button class="btn btn-success" (click)="searchRoster()" style="margin-top: 25px;">Search</button>
+        </div>
+
+
+
+
+      </div>
+
+    </div>
+
+    <div class="card-body">
+      <div class="row">
+        <table class="table table-striped table-hover">
+          <thead>
+          <tr>
+
+            <th>Day</th>
+            <th>Roster</th>
+
+
+
+          </tr>
+
+          </thead>
+          <tbody>
+          <tr *ngFor="let dN of dayName;">
+            <td>{{dN}}</td>
+            <td>
+              <table class="table table-striped table-hover">
+                <thead>
+
+                <tr >
+
+                  <th>
+                      shiftName
+                  </th>
+                  <th>
+                      Duty
+                  </th>
+                  <th>
+                      off Day
+                  </th>
+                  <th>Action</th>
+                </tr>
+
+                </thead>
+
+
+                <tbody>
+                <tr *ngFor="let Roster of AllRosterInfo; index as i">
+
+
+                  <td>
+
+                    {{Roster['shiftName']}}
+
+                  </td>
+
+                  <td>
+                    <span *ngFor="let Ros of RosterInfo">
+                      <p *ngIf="Ros['shiftId']==Roster['shiftId'] && Ros['day']==dN">
+                        {{Ros['EmpRosterNames']}}
+                      </p>
+                    </span>
+
+
+                  </td>
+                  <td>
+                    <span *ngFor="let Ros of RosterInfo">
+                      <p *ngIf="Ros['shiftId']==Roster['shiftId'] && Ros['day']==dN">
+                        {{Ros['EmpRosterOffDutyNames']}}
+                      </p>
+                    </span>
+
+
+                  </td>
+                  <td>
+
+
+
+
+                      <button class="btn btn-info" (click)="ChangeRosterLog(Roster['shiftId'],dN,content)" >Change</button>
+
+
+
+
+
+                  </td>
+
+                </tr>
+
+                </tbody>
+
+
+
+              </table>
+            </td>
+            <td></td>
+
+          </tr>
+
+          </tbody>
+
+
+
+
+        </table>
+
+      </div>
+
+
+
+    </div>
+
+  </div>
+</div>

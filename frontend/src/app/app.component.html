@@ -1,0 +1,19 @@
+
+<!--<app-user-cv-view *ngIf="!nav.visible"></app-user-cv-view>-->
+<!--The content below is only a placeholder and can be replaced.-->
+<ng-template [ngIf]="loadPage" >
+
+
+
+<app-navbar *ngIf="isLogIn()"></app-navbar>
+
+<ngx-spinner ></ngx-spinner>
+<div  class="wrapper">
+
+
+  <router-outlet ></router-outlet>
+</div>
+
+</ng-template>
+
+

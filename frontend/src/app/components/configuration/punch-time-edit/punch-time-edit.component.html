@@ -1,0 +1,82 @@
+<div class="container-fluid">
+  <div class="card">
+    <div class="card-header"><h2>Punch Time Edit</h2></div>
+
+    <div class="card-body">
+      <div class="row">
+
+        <div class="form-group col-md-4">
+
+
+          <label>Employee</label>
+
+          <ng-multiselect-dropdown
+            [placeholder]="'Select Employee'"
+            [data]="employee"
+            [(ngModel)]="selectedItems"
+            [settings]="dropdownSettings"
+
+
+
+          >
+          </ng-multiselect-dropdown>
+
+
+        </div>
+
+        <div class="form-group col-md-4">
+          <label>Date</label>
+          <input bsDatepicker
+                 [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" id="date" name="date" [(ngModel)]="date" autocomplete="off" class="form-control">
+        </div>
+        <br>
+
+
+        <div class="form-group col-md-4">
+          <button class="btn btn-success btn-sm" style="margin-top: 30px" (click)="findRosterAndPunch()">Find</button>
+        </div>
+
+
+
+
+      </div>
+
+      <div class="row" *ngIf="empRoster?.length >0">
+
+        <div class="form-group col-md-12">
+          <label style="text-align: center">Assigned Roster</label>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <tr>
+                <th>Roster Name</th>
+                <th>Roster In Time</th>
+                <th>Roster Out Time</th>
+                <th>Punches</th>
+
+              </tr>
+
+              <tr *ngFor="let eR of empRoster; let i = index">
+
+                <td></td>
+                <td>{{eR['inTime']}}</td>
+                <td>{{eR['outTime']}}</td>
+                <td></td>
+
+
+
+
+              </tr>
+
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+
+
+    </div>
+  </div>
+
+
+</div>

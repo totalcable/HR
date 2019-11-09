@@ -1,0 +1,71 @@
+<div class="container">
+  <div class="card">
+    <div class="card-header-pills">
+      <h3 class="col-md-12" align="center">Leave Summery Details</h3>
+    </div>
+    <div class="card-body">
+      <div class="row">
+
+
+
+        <h4 class="col-md-12" align="center">{{details.firstName}} {{details.lastName}}</h4>
+
+        <table class="table table-bordered table-striped">
+          <thead>
+          <th style="text-align: center">applicationDate</th>
+          <th style="text-align: center">fkLeaveCategory</th>
+          <th style="text-align: center">applicationStatus</th>
+          <th style="text-align: center">startDate</th>
+          <th style="text-align: center">endDate</th>
+          <th style="text-align: center">noOfDays</th>
+          <th style="text-align: center">remarks</th>
+          <th style="text-align: center">Reject Cause</th>
+          </thead>
+          <tbody>
+          <tr *ngFor="let ml of myLeaves" >
+            <td style="text-align: center">{{ml.applicationDate}}</td>
+            <td style="text-align: center">{{ml.categoryName}}</td>
+
+
+            <td *ngIf="ml.departmentHeadApproval==0" style="text-align: center">Department Head Rejected</td>
+
+
+
+
+            <td *ngIf="ml.departmentHeadApproval!=0 && ml.departmentHeadApproval!=null && ml.HR_adminApproval==0"style="text-align: center">HR Rejected</td>
+
+
+
+
+            <td *ngIf="ml.departmentHeadApproval!=0 && ml.departmentHeadApproval!=null && ml.HR_adminApproval!=0 && ml.HR_adminApproval ==null" style="text-align: center">HR Approval Pending</td>
+
+
+
+
+            <td *ngIf="ml.departmentHeadApproval==null && ml.HR_adminApproval ==null" style="text-align: center">Pending</td>
+
+
+
+
+            <td *ngIf="ml.departmentHeadApproval!=0 && ml.departmentHeadApproval!=null && ml.HR_adminApproval!=0 && ml.HR_adminApproval !=null" style="text-align: center">Approved</td>
+
+
+
+            <td style="text-align: center">{{ml.startDate}}</td>
+            <td style="text-align: center">{{ml.endDate}}</td>
+            <td style="text-align: center">{{ml.noOfDays}}</td>
+            <td style="text-align: center">{{ml.remarks}}</td>
+            <td style="text-align: center">{{ml.rejectCause}}</td>
+
+          </tr>
+          </tbody>
+        </table>
+
+
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

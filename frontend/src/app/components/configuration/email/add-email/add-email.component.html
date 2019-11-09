@@ -1,0 +1,58 @@
+<div class="card container">
+  <div class="card-header-pills">
+    <h2 align="center" style="font-family: 'Righteous', cursive;">Add Email (Add/ Edit/ Update)</h2>
+  </div>
+
+  <div class="card-body">
+    <div class="row">
+      <div class="form-group col-md-6">
+        <label>Email</label>
+        <input type="text" class="form-control" placeholder="Email" name="email" [(ngModel)]="emailField.email">
+      </div>
+
+      <div class="form-group col-md-4">
+        <label>Status <span style="color: red">*</span></label>
+        <select name="status" class="form-control" [(ngModel)]="emailField.status">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-md-2" *ngIf="checkId();else other_content">
+        <button class="btn btn-success" (click)="onSubmit()">Insert</button>
+      </div>
+      <ng-template #other_content>
+        <div class="form-group col-md-2">
+          <button class="btn btn-success" (click)="onSubmit()">Update</button>
+        </div>
+      </ng-template>
+      <div class="form-group col-md-2">
+        <button class="btn btn-danger" (click)="reset()">Reset</button>
+      </div>
+    </div>
+
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Email</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let email of emails">
+        <td>{{email.id}}</td>
+        <td>{{email.email | titlecase}}</td>
+        <td>{{email.status | titlecase}}</td>
+        <td>
+          <!--<button class="btn btn-danger" (click)="deleteUser(user)"> Delete</button>-->
+          <button class="btn btn-danger" (click)="editEmail(email)" style="margin-left: 20px;"> Edit</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

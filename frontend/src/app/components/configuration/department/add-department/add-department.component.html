@@ -1,0 +1,111 @@
+<div class="card container">
+  <div class="card-header-pills">
+    <h2 align="center" style="font-family: 'Righteous', cursive;">Add Department (Add/ Edit/ Update)</h2>
+  </div>
+  <div class="card-body">
+    <div class="row">
+
+<!--      <div class="form-group col-md-6">-->
+<!--        <label>Company Name</label>-->
+<!--        <select class="form-control" name="fkCompanyId">-->
+<!--          <option value="">Select Company</option>-->
+<!--          <option *ngFor="let comp of company" [value]="comp.id">-->
+<!--            {{comp.companyName}}-->
+<!--          </option>-->
+<!--        </select>-->
+<!--      </div>-->
+
+      <div class="form-group col-md-6">
+        <label>Department Name</label>
+        <input type="text" class="form-control" placeholder="Dept Name" name="departmentName" [(ngModel)]="departmentField.departmentName">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Department Head</label>
+        <input type="text" class="form-control" placeholder="Dept Head Name" name="departmentHead" [(ngModel)]="departmentField.deptHead">
+      </div>
+
+      <div class="form-group col-md-4">
+        <label>Department Parent</label>
+        <select  class="form-control" id="deptLevel" [(ngModel)]="departmentField.fkDeptParent" >
+          <option value="">Select Parent</option>
+          <option *ngFor="let department of departments" [value]="department.id">
+            {{department.departmentName}}
+          </option>
+        </select>
+      </div>
+
+
+      <div class="form-group col-md-4">
+        <label>Status <span style="color: red">*</span></label>
+        <select name="status" class="form-control" [(ngModel)]="departmentField.status">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-4">
+        <label>Roster Type <span style="color: red">*</span></label>
+        <select name="rosterType" class="form-control" [(ngModel)]="departmentField.rosterType">
+          <option value="1">Single</option>
+          <option value="2">Multiple</option>
+        </select>
+      </div>
+
+<!--      <div class="form-group col-md-6">-->
+<!--        <label>Department Level</label>-->
+<!--        <select (change)="onChangeEvent($event)" class="form-control" id="deptLevel">-->
+<!--          <option value="">Select Levels</option>-->
+<!--          <option   *ngFor="let level of Levels">-->
+<!--            {{level.deptLevel}}-->
+<!--          </option>-->
+<!--        </select>-->
+<!--      </div>-->
+
+    </div>
+
+
+    <div class="row">
+
+      <div class="form-group col-md-2" *ngIf="checkId();else other_content">
+        <button class="btn btn-success" (click)="onSubmit()">Insert</button>
+      </div>
+
+      <ng-template #other_content>
+        <div class="form-group col-md-2">
+          <button class="btn btn-success" (click)="onSubmit()">Update</button>
+        </div>
+      </ng-template>
+      <div class="form-group col-md-2">
+        <button class="btn btn-danger" (click)="reset()">Reset</button>
+      </div>
+
+    </div>
+
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Department Name</th>
+        <th>Status</th>
+        <th>Roster Type</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let dept of departments">
+        <td>{{dept.id}}</td>
+        <td>{{dept.departmentName | titlecase}}</td>
+        <td>{{dept.status | titlecase}}</td>
+        <td *ngIf="dept.rosterType==1">Single Roster</td>
+        <td *ngIf="dept.rosterType==2">Mupltiple Roster</td>
+        <td>
+          <!--<button class="btn btn-danger" (click)="deleteUser(user)"> Delete</button>-->
+          <button class="btn btn-danger" (click)="editDept(dept)" style="margin-left: 20px;"> Edit</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+
+  </div>
+</div>
