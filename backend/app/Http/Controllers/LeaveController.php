@@ -72,7 +72,7 @@ class LeaveController extends Controller
 
         if ($emp['email']!='' && $emp['email']!= null){
 
-            Mail::to($emp['email'])->send(new LeaveApplied());
+            Mail::to($emp['email'])->send(new LeaveApplied($emp));
             Mail::to('faruk.totaltvs@gmail.com')->send(new LeaveApplied($emp));
         }
 
@@ -155,7 +155,7 @@ class LeaveController extends Controller
 
             if ($emp['email']!='' && $emp['email']!= null){
 
-                Mail::to($emp['email'])->send(new LeaveApplied());
+                Mail::to($emp['email'])->send(new LeaveApplied($emp));
                 Mail::to('faruk.totaltvs@gmail.com')->send(new LeaveApplied($emp));
             }
 

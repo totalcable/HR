@@ -1,0 +1,31 @@
+<div class="container-fluid">
+  <div class="card">
+    <div class="card-header"><h2>Duty Calculate</h2></div>
+    <div class="card-body">
+      <div class="row">
+        <div class="form-group col-md-3">
+          <label>Date</label>
+          <input bsDatepicker
+                 [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" name="date" id="date"  class="form-control input">
+        </div>
+
+      </div>
+
+      <table datatable class="table" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+        <thead>
+        <tr>
+
+          <th>Name</th>
+          <th>Employee ID</th>
+
+          <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+

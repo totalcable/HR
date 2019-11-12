@@ -254,6 +254,10 @@ Route::group([
 
    // Route::post('punch/getEmpPunches','PunchController@getEmpRoster');
 
+    /* duty */
+
+    Route::post('duty/calculateDuty','DutyController@calculateDutyFromAttendance');
+
 
 
 });

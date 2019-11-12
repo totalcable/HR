@@ -37,28 +37,28 @@ class LeaveApplied extends Mailable
     public function build()
     {
 
-        $emp=Employee::select('employeeinfo.fkDepartmentId','employeeinfo.id','employeeinfo.fkDesignation',
-            'designations.title as designationTitle','departments.departmentName','attemployeemap.attDeviceUserId',
-            DB::raw("CONCAT(COALESCE(firstName,''),' ',COALESCE(middleName,''),' ',COALESCE(lastName,'')) AS empFullname"))
-            ->leftJoin('departments','departments.id','employeeinfo.fkDepartmentId')
-            ->leftJoin('designations','designations.id','employeeinfo.fkDesignation')
-            ->leftJoin('attemployeemap','attemployeemap.employeeId','employeeinfo.id')
-            ->where('fkUserId',Auth::user()->id)->first();
-
-
-
-        $emp=Employee::where('fkUserId',auth()->user()->id)->first();
-        $leaves=Leave::select('leaves.*','leavecategories.categoryName')
-            ->where('fkEmployeeId',$emp->id)
-
-            ->orderBy('leaves.id','desc')
-            ->get();
-
-        return $leaves;
-
-        //print_r($emp); exit;
-
-        //return $this->subject('Leave Applied in HRMTIS notification!')->view('Email.-')->with(['emp' => $emp]);
+//        $emp=Employee::select('employeeinfo.fkDepartmentId','employeeinfo.id','employeeinfo.fkDesignation',
+//            'designations.title as designationTitle','departments.departmentName','attemployeemap.attDeviceUserId',
+//            DB::raw("CONCAT(COALESCE(firstName,''),' ',COALESCE(middleName,''),' ',COALESCE(lastName,'')) AS empFullname"))
+//            ->leftJoin('departments','departments.id','employeeinfo.fkDepartmentId')
+//            ->leftJoin('designations','designations.id','employeeinfo.fkDesignation')
+//            ->leftJoin('attemployeemap','attemployeemap.employeeId','employeeinfo.id')
+//            ->where('fkUserId',Auth::user()->id)->first();
+//
+//
+//
+//        $emp=Employee::where('fkUserId',auth()->user()->id)->first();
+//        $leaves=Leave::select('leaves.*','leavecategories.categoryName')
+//            ->where('fkEmployeeId',$emp->id)
+//
+//            ->orderBy('leaves.id','desc')
+//            ->get();
+//
+//        return $leaves;
+//
+//        //print_r($emp); exit;
+//
+//        //return $this->subject('Leave Applied in HRMTIS notification!')->view('Email.-')->with(['emp' => $emp]);
 
         return $this->subject('Leave Applied in HRMTIS notification!')->view('Email.LeaveApplied')->with(['emp' => $this->emp]);
 

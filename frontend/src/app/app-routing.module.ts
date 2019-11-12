@@ -33,6 +33,7 @@ import { DeptWiseStaticRosterComponent } from './components/configuration/dept-w
 import { PasswordChangeComponent } from './components/configuration/password-change/password-change.component';
 import { PunchTimeEditComponent } from './components/configuration/punch-time-edit/punch-time-edit.component';
 import { DatabaseComponent } from './components/configuration/database/database.component';
+import { DutyComponent } from './components/configuration/duty/duty.component';
 
 
 
@@ -79,6 +80,7 @@ const routes: Routes = [
     { path: 'configuration/roster/dept-wise-static-roster', component: DeptWiseStaticRosterComponent, canActivate: [AuthService]  },
     { path: 'configuration/employee/passwordChange', component: PasswordChangeComponent, canActivate: [AuthService]  },
     { path: 'configuration/punch-time/edit', component: PunchTimeEditComponent, canActivate: [AuthService]  },
+    { path: 'duty/getDuty', component: DutyComponent, canActivate: [AuthService]  },
 
 
 

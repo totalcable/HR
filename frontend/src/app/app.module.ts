@@ -43,6 +43,7 @@ import { DeptWiseStaticRosterComponent } from './components/configuration/dept-w
 import { PasswordChangeComponent } from './components/configuration/password-change/password-change.component';
 import { DatabaseComponent } from './components/configuration/database/database.component';
 import { PunchTimeEditComponent } from './components/configuration/punch-time-edit/punch-time-edit.component';
+import { DutyComponent } from './components/configuration/duty/duty.component';
 
 
 
@@ -85,6 +86,7 @@ import { PunchTimeEditComponent } from './components/configuration/punch-time-ed
     PasswordChangeComponent,
     DatabaseComponent,
     PunchTimeEditComponent,
+    DutyComponent,
 
 
 
