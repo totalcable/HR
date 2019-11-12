@@ -15,6 +15,11 @@ export class AddLeaveComponent implements OnInit {
   employee: any = {};
   leaveCategories: any;
   myLeaves: any;
+  totalLeaveAssigned: number;
+  leaveTaken: number;
+  temp: any;
+  applyShow: boolean;
+
   // tslint:disable-next-line:max-line-length
   constructor(public http: HttpClient, private token: TokenService , public route: ActivatedRoute, private router: Router, private spinner: NgxSpinnerService, ) { }
 
@@ -22,6 +27,9 @@ export class AddLeaveComponent implements OnInit {
 
     this.getCategory();
     this.getMyLeaves();
+    this.getLeaveLimit();
+    this.applyShow=true;
+
 
   }
 
@@ -31,6 +39,31 @@ export class AddLeaveComponent implements OnInit {
     const token = this.token.get();
     this.http.get(Constants.API_URL + 'leave/getLeaveCategory' + '?token=' + token).subscribe(data => {
         this.leaveCategories = data;
+      },
+      error => {
+        console.log(error);
+      }
+    );
+  }
+  getLeaveLimit() {
+
+    const token = this.token.get();
+
+    this.http.get(Constants.API_URL + 'leave/limit/getlimit' + '?token=' + token).subscribe(data => {
+
+        this.temp = data;
+        this.totalLeaveAssigned = this.temp['leaveLimit'].totalLeave;
+        this.leaveTaken = this.temp['leaveTaken'];
+
+        if (this.leaveTaken >= this.totalLeaveAssigned) {
+          this.applyShow=false;
+
+        }else {
+          this.applyShow=true;
+        }
+
+
+
       },
       error => {
         console.log(error);
@@ -89,7 +122,7 @@ export class AddLeaveComponent implements OnInit {
     this.spinner.show();
     this.http.post(Constants.API_URL + 'leave/assignLeavePersonal' + '?token=' + token, form).subscribe(data => {
         this.spinner.hide();
-        console.log(data);
+       // console.log(data);
         this.getMyLeaves();
 
 
@@ -109,10 +142,11 @@ export class AddLeaveComponent implements OnInit {
       },
       error => {
         console.log(error);
+        this.spinner.hide();
         $.alert({
           title: 'Alert!',
           type: 'Red',
-          content: 'Please Fill-up all the field',
+          content: 'there was a error in mail',
           buttons: {
             tryAgain: {
               text: 'Ok',

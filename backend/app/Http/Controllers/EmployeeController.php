@@ -100,6 +100,12 @@ class EmployeeController extends Controller {
         $joinInfo->workingLocation = $r->workingLocation;
         $joinInfo->contactNo = $r->contactNo;
         $joinInfo->salary = $r->salary;
+        if ($r->pf==1){
+            $joinInfo->pf_fund = $r->pf;
+        }else if ($r->pf==0){
+            $joinInfo->pf_fund = null;
+        }
+
 
         $joinInfo->e_name = $r->e_name;
         $joinInfo->e_street_address = $r->e_street_address;
@@ -147,7 +153,7 @@ class EmployeeController extends Controller {
             'accessPin','employeeinfo.fkDepartmentId','employeeinfo.employeeId','fkEmployeeType','employeeinfo.fkDesignation',
             'workingLocation','supervisor', 'probationPeriod','bloodGroup','email_off', 'employeeinfo.fkActivationStatus', 'employeeinfo.inDeviceNo',
             'e_name','e_street_address','e_apartment_unit','e_city','e_state','e_zip_code','e_phone','e_alternate_phone','e_relationship',
-            'employeeinfo.outDeviceNo')
+            'employeeinfo.outDeviceNo','employeeinfo.pf_fund')
                 ->leftJoin('attemployeemap', 'attemployeemap.employeeId', 'employeeinfo.id')
                 ->where('employeeinfo.id', '=', $r->id)
                 ->first();
@@ -171,10 +177,12 @@ class EmployeeController extends Controller {
 
     public function getAllEmployee(Request $r) {
         $employee = Employee::select('attemployeemap.attDeviceUserId', 'employeeinfo.firstName', 'employeeinfo.lastName', 'employeeinfo.middleName', 'employeeinfo.EmployeeId', 'designations.title', 'departments.departmentName', 'employeeinfo.id as empid'
-                        , 'employeeinfo.weekend',DB::raw("CONCAT(COALESCE(employeeinfo.firstName,''),' ',COALESCE(employeeinfo.middleName,''),' ',COALESCE(employeeinfo.lastName,'')) AS empFullname"))
+                        , 'employeeinfo.weekend','leavelimit.totalLeave','leavelimit.leaveTaken',
+            DB::raw("CONCAT(COALESCE(employeeinfo.firstName,''),' ',COALESCE(employeeinfo.middleName,''),' ',COALESCE(employeeinfo.lastName,'')) AS empFullname"))
                 ->leftjoin('designations', 'designations.id', '=', 'employeeinfo.fkDesignation')
                 ->leftjoin('departments', 'departments.id', '=', 'employeeinfo.fkDepartmentId')
-                ->leftJoin('attemployeemap', 'attemployeemap.employeeId', 'employeeinfo.id');
+                ->leftJoin('attemployeemap', 'attemployeemap.employeeId', 'employeeinfo.id')
+                ->leftJoin('leavelimit', 'leavelimit.fkemployeeId', 'employeeinfo.id');
 //                ->where('resignDate', null);
 //            ->where('employeeinfo.fkCompany' , auth()->user()->fkCompany);
 

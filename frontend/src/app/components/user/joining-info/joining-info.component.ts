@@ -35,6 +35,7 @@ export class JoiningInfoComponent implements OnInit {
     workingLocation: '',
     email_off: '',
     bloodGroup: '',
+    pf: '',
 
     department: '',
     designation: '',
@@ -158,6 +159,12 @@ export class JoiningInfoComponent implements OnInit {
         this.employeeJoiningForm.empType = this.JoiningForm.fkEmployeeType;
         this.employeeJoiningForm.designation = this.JoiningForm.fkDesignation;
         this.employeeJoiningForm.bloodGroup = this.JoiningForm.bloodGroup;
+        if (this.JoiningForm.pf_fund == null) {
+          this.employeeJoiningForm.pf = 0;
+        } else {
+          this.employeeJoiningForm.pf = this.JoiningForm.pf_fund;
+        }
+
 
         this.employeeJoiningForm.contactNo = this.JoiningForm.contactNo;
         this.employeeJoiningForm.workingLocation = this.JoiningForm.workingLocation;

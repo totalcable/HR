@@ -117,6 +117,8 @@ export class LeaveComponent implements OnInit {
         { data: 'firstName' , name: 'employeeinfo.firstName'},
         { data: 'EmployeeId' , name: 'employeeinfo.EmployeeId' },
 
+        { data: 'totalLeave', name: 'leavelimit.totalLeave'},
+        { data: 'leaveTaken', name: 'leavelimit.leaveTaken'},
         { data: 'weekend', name: 'employeeinfo.weekend'},
 
         {

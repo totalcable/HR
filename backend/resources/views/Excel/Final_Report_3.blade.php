@@ -44,6 +44,7 @@
         <th style="text-align: center;vertical-align: middle;"width="15">Total Absent</th>
         <th style="text-align: center;vertical-align: middle;"width="25">S / E (Hour)</th>
 
+
     </tr>
     </thead>
     <tbody>
@@ -419,6 +420,7 @@
                     0
                 @endif
             </td>
+            
 
         </tr>
 

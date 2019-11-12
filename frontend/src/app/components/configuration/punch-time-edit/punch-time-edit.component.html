@@ -1,3 +1,56 @@
+<!--modal-->
+<ng-template #punchTemplate let-c="close" let-d="dismiss" >
+  <div class="modal-header">
+    <h4 class="modal-title">Add punch Time</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modalClose()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <div class="row">
+      <span style="color: red;text-align: center">For In-Time: time can be maximum 2 hours before Roster in time</span><br>
+      <span style="color: red;text-align: center">For Out-Time: time can be maximum 2 hours after Roster out time</span>
+
+    </div>
+
+    <div class="row" >
+
+
+      <input type="hidden" id="inTime" [(ngModel)]="inTime" class="form-control">
+      <input type="hidden" id="outTime" [(ngModel)]="outTime" class="form-control">
+      <input type="hidden" id="insertDate" [(ngModel)]="insertDate" class="form-control">
+
+        <div class="form-group col-md-4">
+          <label>Time</label>
+          <input type="time" id="addTime" class="form-control">
+        </div>
+
+      <div class="form-group col-md-4">
+          <label>Device</label>
+        <select class="form-control" id="deviceNumber"  name="deviceNumber">
+          <option value="">select Device</option>
+          <option value="{{inDevice}}">in Device-{{inDevice}}</option>
+          <option value="{{outDevice}}">out Device-{{outDevice}}</option>
+        </select>
+
+        </div>
+
+      <div class="form-group col-md-4">
+
+        <button class="btn btn-success" (click)="add()" style="margin-top: 25px;">Add</button>
+
+      </div>
+
+
+
+    </div>
+
+
+  </div>
+</ng-template>
+
+
 <div class="container-fluid">
   <div class="card">
     <div class="card-header"><h2>Punch Time Edit</h2></div>
@@ -15,8 +68,6 @@
             [data]="employee"
             [(ngModel)]="selectedItems"
             [settings]="dropdownSettings"
-
-
 
           >
           </ng-multiselect-dropdown>
@@ -52,6 +103,7 @@
                 <th>Roster In Time</th>
                 <th>Roster Out Time</th>
                 <th>Punches</th>
+                <th>Action</th>
 
               </tr>
 
@@ -61,8 +113,9 @@
                 <td>{{eR['inTime']}}</td>
                 <td>{{eR['outTime']}}</td>
                 <td></td>
-
-
+                <td>
+                  <button class="btn btn-info" (click)="AddPunch(eR['inTime'],eR['outTime'],punchTemplate)">Add</button>
+                </td>
 
 
               </tr>

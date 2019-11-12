@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Employee;
 use App\Leave;
 use App\LeaveCategory;
+use App\LeaveLimit;
 use App\Mail\LeaveApplied;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -67,6 +68,7 @@ class LeaveController extends Controller
         $leave->createdBy=auth()->user()->id;
 
         $leave->save();
+
 
         if ($emp['email']!='' && $emp['email']!= null){
 
@@ -274,6 +276,13 @@ class LeaveController extends Controller
                     $getLeaveInfo->HR_adminApproval=$emp['id'];
                     $getLeaveInfo->save();
                     $msg='Request Accepted';
+
+                    $leaveLimit=LeaveLimit::where('fkemployeeId',$emp->id)
+                        ->where('year',date('Y'))
+                        ->first();
+
+                    $leaveLimit->leaveTaken=($leaveLimit->leaveTaken+1);
+                    $leaveLimit->save();
 
 
                 }else{

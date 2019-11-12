@@ -67,6 +67,7 @@ Route::group([
 
     //===============================Leave Limit==================================
     Route::post('leave/limit/get','LeaveLimitController@get');
+    Route::get('leave/limit/getlimit','LeaveLimitController@getlimit');
     Route::post('leave/limit/post','LeaveLimitController@post');
 
 
@@ -131,6 +132,8 @@ Route::group([
     Route::post('report/attendanceHR','AttendanceController@getAttendenceDataForHR');
     Route::post('report/attendanceHRINOUT','AttendanceController@getAttendenceDataForHRINOUT');
     Route::post('report/finalReport-1','AttendanceController@finalReport_1');
+    Route::post('report/finalReportWithSalary','AttendanceController@finalReportSummeryWithSalary');
+
 
     Route::post('report/finalReport-2','AttendanceController@finalReport_2');
 
@@ -142,7 +145,7 @@ Route::group([
     Route::post('leave/assignLeave','LeaveController@assignLeave');
     Route::post('leave/assignLeavePersonal','LeaveController@assignLeavePersonal');
 
-    Route::post('leave/assignLeavePersonal','LeaveController@assignLeavePersonal');
+//    Route::post('leave/assignLeavePersonal','LeaveController@assignLeavePersonal');
 
     //Show Leave Requests
     Route::post('leave/getLeaveRequests','LeaveController@getLeaveRequests');
@@ -246,6 +249,8 @@ Route::group([
     /* punch */
 
     Route::post('punch/getEmpRosterAndPunches','PunchController@getEmpRosterAndPunches');
+    Route::post('punch/addPunches','PunchController@addPunches');
+    Route::post('punch/getEmployeeINandOUTdevice','PunchController@getEmployeeINandOUTdevice');
 
    // Route::post('punch/getEmpPunches','PunchController@getEmpRoster');
 

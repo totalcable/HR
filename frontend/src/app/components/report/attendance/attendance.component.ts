@@ -993,69 +993,68 @@ export class AttendanceComponent implements OnInit {
 
 
 
+          } else if ($('#excelType').val() == '10') {
+
+
+              this.http.post(Constants.API_URL + 'report/finalReportWithSalary' + '?token=' + token, {
+
+                startDate: $('#startDate').val(),
+                endDate: $('#endDate').val(),
+                empId: empList,
+                report: 'finalReportWithSalary'
+
+              }).subscribe(data => {
+
+                  this.spinner.hide();
+                //  console.log(data);
+
+
+                  const fileName = Constants.Image_URL + 'exportedExcel/' + data;
+
+                  const link = document.createElement('a');
+                  link.download = data + '.xls';
+                  const uri = fileName + '.xls';
+                  link.href = uri;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  $('#excelType').val('');
+                  this.selectedItems = [];
+                  this.selectedDropDown = [];
+                  $('#RosterInfo').val('');
+                  this.rosterDiv = false;
+                  this.empDiv = true;
+
+                  /* delete the server file */
+
+                const fileinfo = {
+                  'filePath': 'exportedExcel/',
+                  'fileName': data + '.xls',
+                };
+
+                  this.http.post(Constants.API_URL + 'deleteFile' + '?token=' + token, fileinfo).subscribe(data => {
+
+                  //  console.log(data);
+
+
+                    },
+                    error => {
+                      console.log(error);
+                    }
+                  );
+
+
+                },
+                error => {
+                  console.log(error);
+                  this.spinner.hide();
+                }
+              );
+
+
+
+
           }
-          // else if ($('#excelType').val() == "10") {
-          //
-          //
-          //     this.http.post(Constants.API_URL + 'report/MultipleRoserWiseReport-1' + '?token=' + token, {
-          //
-          //       startDate: $('#startDate').val(),
-          //       endDate: $('#endDate').val(),
-          //       empId: empList,
-          //       report: 'Multiple_Roster_wise_Report-1'
-          //
-          //     }).subscribe(data => {
-          //
-          //         this.spinner.hide();
-          //         console.log(data);
-          //
-          //
-          //         let fileName = Constants.Image_URL + 'exportedExcel/' + data;
-          //
-          //         let link = document.createElement("a");
-          //         link.download = data + ".xls";
-          //         let uri = fileName + ".xls";
-          //         link.href = uri;
-          //         document.body.appendChild(link);
-          //         link.click();
-          //         document.body.removeChild(link);
-          //         $("#excelType").val("");
-          //         this.selectedItems = [];
-          //         this.selectedDropDown = [];
-          //         $("#RosterInfo").val("");
-          //         this.rosterDiv=false;
-          //         this.empDiv=true;
-          //
-          //         /* delete the server file */
-          //
-          //       let fileinfo={
-          //         'filePath':'exportedExcel/',
-          //         'fileName':data + ".xls",
-          //       }
-          //
-          //         this.http.post(Constants.API_URL+'deleteFile'+'?token='+token,fileinfo).subscribe(data => {
-          //
-          //         //  console.log(data);
-          //
-          //
-          //           },
-          //           error => {
-          //             console.log(error);
-          //           }
-          //         );
-          //
-          //
-          //       },
-          //       error => {
-          //         console.log(error);
-          //         this.spinner.hide();
-          //       }
-          //     );
-          //
-          //
-          //
-          //
-          // }
 
 
         }
@@ -1363,6 +1362,69 @@ export class AttendanceComponent implements OnInit {
                 title: 'Alert',
                 content: 'There is no Employee in this Department! , Please Select anther Department',
               });
+
+
+
+        } else if ($('#excelType').val() == '10') {
+
+          this.spinner.show();
+          const token = this.token.get();
+
+          this.http.post(Constants.API_URL + 'report/finalReportWithSalary' + '?token=' + token, {
+
+            startDate: $('#startDate').val(),
+            endDate: $('#endDate').val(),
+
+            report: 'finalReportWithSalary'
+
+          }).subscribe(data => {
+
+              this.spinner.hide();
+             //   console.log(data);
+
+
+              const fileName = Constants.Image_URL + 'exportedExcel/' + data;
+
+              const link = document.createElement('a');
+              link.download = data + '.xls';
+              const uri = fileName + '.xls';
+              link.href = uri;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              $('#excelType').val('');
+              this.selectedItems = [];
+              this.selectedDropDown = [];
+              $('#RosterInfo').val('');
+              this.rosterDiv = false;
+              this.empDiv = true;
+
+              /* delete the server file */
+
+              const fileinfo = {
+                'filePath': 'exportedExcel/',
+                'fileName': data + '.xls',
+              };
+
+              this.http.post(Constants.API_URL + 'deleteFile' + '?token=' + token, fileinfo).subscribe(data => {
+
+                  //  console.log(data);
+
+
+                },
+                error => {
+                  console.log(error);
+                }
+              );
+
+
+            },
+            error => {
+              console.log(error);
+              this.spinner.hide();
+            }
+          );
+
 
 
 

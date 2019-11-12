@@ -5,6 +5,15 @@
     </div>
     <div class="card-body">
       <div class="row">
+        <div style="font-weight: bold" class="form-group col-md-6">
+          <span style="color: red">Total Leave {{totalLeaveAssigned}}</span>
+        </div>
+        <div style="font-weight: bold" class="form-group col-md-6">
+          <span style="color: red">Total Taken - {{leaveTaken}}</span>
+        </div>
+
+      </div>
+      <div class="row">
 
         <div class="form-group col-md-3">
           <label>Start Date</label>
@@ -40,7 +49,7 @@
           <textarea class="form-control input" [(ngModel)]="employee.remark" placeholder="cause"></textarea>
         </div>
 
-        <div class="form-group col-md-3">
+        <div *ngIf="applyShow" class="form-group col-md-3">
           <button class="btn btn-success btn-sm" (click)="assignLeave()">Apply Leave</button>
         </div>
 

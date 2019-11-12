@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CheckService } from '../../services/check.service';
 import {TokenService} from '../../services/token.service';
 import {HttpClient} from '@angular/common/http';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {Constants} from '../../constants';
 import { RoleManagementService } from '../../services/role-management.service';
 declare var $: any;
@@ -23,12 +23,17 @@ export class HomeComponent implements OnInit {
 
   Role: any;
 
+  mySubscription: any;
+
 
   // tslint:disable-next-line:max-line-length
   constructor(private check: CheckService, public http: HttpClient, private token: TokenService , public route: ActivatedRoute,
               private router: Router, private roleService: RoleManagementService) {
 
+
+
   }
+
 
 
   ngOnInit() {
@@ -82,6 +87,8 @@ export class HomeComponent implements OnInit {
     );
 
   }
+
+
 
 
 

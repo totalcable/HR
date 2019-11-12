@@ -525,7 +525,7 @@ class AttendanceController extends Controller {
             $results = collect($results);
         } else {
 
-            $dutySwap=Swap::whereIn('swap_by', $r->empId)->whereBetween('swap_by_date', array($fromDate, $toDate))
+            $dutySwap=Swap::whereBetween('swap_by_date', array($fromDate, $toDate))
                 ->where(function ($query) {
                     $query->where('departmentHeadApproval', '!=', '0')
                         ->orWhere('departmentHeadApproval', '!=', null);
@@ -612,6 +612,207 @@ class AttendanceController extends Controller {
                             ));
 
                             $sheet->loadView('Excel.Final_Report_1', compact('results', 'allE', 'fromDate', 'toDate', 'dates', 'allEmp',
+                                'startDate', 'endDate', 'allLeave', 'allWeekend', 'allHoliday','govtHoliday','allTimeSwap','dutySwap'));
+                        });
+                    }
+                })->store('xls', $filePath);
+
+        return response()->json($fileName);
+    }
+    public function finalReportWithSalary(Request $r) {
+
+        $fromDate = $r->startDate;
+        $toDate = $r->endDate;
+
+
+        ini_set('max_execution_time', 0);
+
+        $startDate = Carbon::parse($fromDate);
+        $endDate = Carbon::parse($toDate);
+
+        $dates = $this->getDatesFromRange($startDate, $endDate);
+
+        $fromDate = Carbon::parse($fromDate)->subDays(1);
+        $toDate = Carbon::parse($toDate)->addDays(1);
+
+
+        $filePath = public_path() . "/exportedExcel";
+
+        $fileName = "finalReportWithSalary" . date("Y-m-d_H-i-s");
+        $fileInfo = array(
+            'fileName' => $fileName,
+            'filePath' => $fileName,
+        );
+
+
+
+        if ($r->empId) {
+
+            $dutySwap=Swap::whereIn('swap_by', $r->empId)->whereBetween('swap_by_date', array($fromDate, $toDate))
+                ->where(function ($query) {
+                    $query->where('departmentHeadApproval', '!=', '0')
+                        ->orWhere('departmentHeadApproval', '!=', null);
+                })->where(function ($query) {
+                    $query->where('HR_adminApproval', '!=', '0')
+                        ->orWhere('HR_adminApproval', '!=', null);
+                })->get();
+
+            $allTimeSwap=TimeSwap::whereIn('fkEmployeeId', $r->empId)
+                    ->whereBetween('date', array($fromDate, $toDate))
+                ->where(function ($query) {
+                    $query->where('departmentHeadApproval', '!=', '0')
+                        ->orWhere('departmentHeadApproval', '!=', null);
+                })->where(function ($query) {
+                    $query->where('HR_adminApproval', '!=', '0')
+                        ->orWhere('HR_adminApproval', '!=', null);
+                })->get();
+
+            $allTimeSwap=collect($allTimeSwap);
+
+            $allLeave = Leave::leftJoin('leavecategories', 'leavecategories.id', '=', 'leaves.fkLeaveCategory')
+                    ->where('applicationStatus', "Approved")
+                    ->whereIn('leaves.fkEmployeeId', $r->empId)
+                    ->whereBetween('startDate', array($fromDate, $toDate))
+                    ->get();
+
+            $allLeave = collect($allLeave);
+
+            $allWeekend = ShiftLog::whereNotNull('weekend')
+                    ->whereIn('shiftlog.fkEmployeeId', $r->empId)
+                    ->whereBetween('startDate', array($fromDate, $toDate))
+                    ->get();
+
+            $allWeekend = collect($allWeekend);
+
+            $allHoliday = ShiftLog::whereNotNull('holiday')
+                    ->whereIn('shiftlog.fkEmployeeId', $r->empId)
+                    ->whereBetween('startDate', array($fromDate, $toDate))
+                    ->get();
+
+            $allHoliday = collect($allHoliday);
+
+            $govtHoliday=GovtHoliday::where('startDate','>=',$fromDate)->where('endDate','<=',$toDate)->where('status','Approved')->get();
+
+            $govtHoliday=collect($govtHoliday);
+
+            $allEmp = Employee::select('employeeinfo.id', 'attemployeemap.attDeviceUserId', 'departments.departmentName','designations.title as designationTitle',
+                DB::raw("CONCAT(COALESCE(firstName,''),' ',COALESCE(middleName,''),' ',COALESCE(lastName,'')) AS empFullname"),
+                'employeeinfo.inDeviceNo', 'employeeinfo.outDeviceNo','employeeinfo.salary','employeeinfo.pf_fund')
+                    ->leftJoin('attemployeemap', 'attemployeemap.employeeId', 'employeeinfo.id')
+                    ->leftJoin('departments', 'departments.id', 'employeeinfo.fkDepartmentId')
+                    ->leftJoin('designations', 'designations.id', 'employeeinfo.fkDesignation')
+                    ->whereIn('employeeinfo.id', $r->empId)
+                    ->orderBy('departments.orderBy', 'ASC')
+                    ->orderBy('employeeinfo.id', 'ASC')
+//                ->whereNotNull('employeeinfo.fkDepartmentId')
+                    ->get();
+
+            $List = implode(',', $r->empId);
+
+            $results = DB::select(DB::raw("select em.employeeId,ad.id,sl.inTime,sl.outTime,sl.adjustmentDate,ad.fkAttDevice,sl.holiday,sl.weekend,ad.fkAttDevice
+            , date_format(ad.accessTime,'%Y-%m-%d') attendanceDate
+            , date_format(ad.accessTime,'%H:%i:%s') accessTime
+            , date_format(ad.accessTime,'%Y-%m-%d %H:%i:%s') accessTime2
+            from attendancedata ad left join attemployeemap em on ad.attDeviceUserId = em.attDeviceUserId
+            and date_format(ad.accessTime,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'
+            left join shiftlog sl on em.employeeId = sl.fkemployeeId and date_format(ad.accessTime,'%Y-%m-%d') between date_format(sl.startDate,'%Y-%m-%d') and ifnull(date_format(sl.endDate,'%Y-%m-%d'),curdate())
+            left join employeeinfo emInfo on em.employeeId = emInfo.id and emInfo.fkDepartmentId is not null
+
+            where date_format(ad.accessTime,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'
+            and emInfo.id IN (" . $List . ")"));
+
+            $results = collect($results);
+        } else {
+
+            $dutySwap=Swap::whereBetween('swap_by_date', array($fromDate, $toDate))
+                ->where(function ($query) {
+                    $query->where('departmentHeadApproval', '!=', '0')
+                        ->orWhere('departmentHeadApproval', '!=', null);
+                })->where(function ($query) {
+                    $query->where('HR_adminApproval', '!=', '0')
+                        ->orWhere('HR_adminApproval', '!=', null);
+                })->get();
+
+            $allTimeSwap=TimeSwap::whereBetween('date', array($fromDate, $toDate))
+                ->where(function ($query) {
+                    $query->where('departmentHeadApproval', '!=', '0')
+                        ->orWhere('departmentHeadApproval', '!=', null);
+                })->where(function ($query) {
+                    $query->where('HR_adminApproval', '!=', '0')
+                        ->orWhere('HR_adminApproval', '!=', null);
+                })->get();
+
+            $allTimeSwap=collect($allTimeSwap);
+
+            $allLeave = Leave::leftJoin('leavecategories', 'leavecategories.id', '=', 'leaves.fkLeaveCategory')
+                    ->where('applicationStatus', "Approved")
+                    ->whereBetween('startDate', array($fromDate, $toDate))
+                    ->get();
+
+            $allLeave = collect($allLeave);
+
+            $allWeekend = ShiftLog::whereNotNull('weekend')
+                    ->whereBetween('startDate', array($fromDate, $toDate))
+                    ->get();
+
+
+            $allWeekend = collect($allWeekend);
+
+            $allHoliday = ShiftLog::whereNotNull('holiday')
+                    ->whereBetween('startDate', array($fromDate, $toDate))
+                    ->get();
+
+            $allHoliday = collect($allHoliday);
+
+            $govtHoliday=GovtHoliday::where('startDate','>=',$fromDate)->where('endDate','<=',$toDate)->where('status','Approved')->get();
+
+            $govtHoliday=collect($govtHoliday);
+
+            $allEmp = Employee::select('employeeinfo.id', 'attemployeemap.attDeviceUserId', 'departments.departmentName',
+                DB::raw("CONCAT(COALESCE(firstName,''),' ',COALESCE(middleName,''),' ',COALESCE(lastName,'')) AS empFullname"),
+                'employeeinfo.inDeviceNo', 'employeeinfo.outDeviceNo','employeeinfo.salary','employeeinfo.pf_fund')
+                    ->leftJoin('attemployeemap', 'attemployeemap.employeeId', 'employeeinfo.id')
+                    ->leftJoin('departments', 'departments.id', 'employeeinfo.fkDepartmentId')
+                    ->orderBy('departments.orderBy', 'ASC')
+                    ->orderBy('employeeinfo.id', 'ASC')
+//                ->whereNotNull('employeeinfo.fkDepartmentId')
+                    ->get();
+
+            $results = DB::select(DB::raw("select em.employeeId,ad.id,sl.inTime,sl.outTime,sl.adjustmentDate,ad.fkAttDevice,sl.holiday,sl.weekend,ad.fkAttDevice
+            , date_format(ad.accessTime,'%Y-%m-%d') attendanceDate
+            , date_format(ad.accessTime,'%H:%i:%s') accessTime
+            , date_format(ad.accessTime,'%Y-%m-%d %H:%i:%s') accessTime2
+            from attendancedata ad left join attemployeemap em on ad.attDeviceUserId = em.attDeviceUserId
+            and date_format(ad.accessTime,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'
+            left join shiftlog sl on em.employeeId = sl.fkemployeeId and date_format(ad.accessTime,'%Y-%m-%d') between date_format(sl.startDate,'%Y-%m-%d') and ifnull(date_format(sl.endDate,'%Y-%m-%d'),curdate())
+            left join employeeinfo emInfo on em.employeeId = emInfo.id and emInfo.fkDepartmentId is not null
+
+            where date_format(ad.accessTime,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'"));
+
+            $results = collect($results);
+        }
+
+       // return $allEmp;
+
+        $check = Excel::create($fileName, function ($excel) use ($results, $dates, $allEmp, $fromDate, $toDate, $startDate, $endDate, $allLeave, $allHoliday,
+            $allWeekend,$govtHoliday,$allTimeSwap,$dutySwap) {
+
+                    foreach ($allEmp as $allE) {
+
+                        $excel->sheet($allE->attDeviceUserId, function ($sheet) use ($results, $allE, $dates, $allEmp, $fromDate, $toDate, $startDate,
+                                $endDate, $allLeave, $allHoliday, $allWeekend,$govtHoliday,$allTimeSwap,$dutySwap) {
+
+                            $sheet->freezePane('B5');
+
+                            $sheet->setStyle(array(
+                                'font' => array(
+                                    'name' => 'Calibri',
+                                    'size' => 10,
+                                    'bold' => false
+                                )
+                            ));
+
+                            $sheet->loadView('Excel.finalReportWithSalary', compact('results', 'allE', 'fromDate', 'toDate', 'dates', 'allEmp',
                                 'startDate', 'endDate', 'allLeave', 'allWeekend', 'allHoliday','govtHoliday','allTimeSwap','dutySwap'));
                         });
                     }
@@ -945,6 +1146,195 @@ class AttendanceController extends Controller {
                             ));
 
                             $sheet->loadView('Excel.Final_Report_3', compact('results', 'fromDate', 'toDate', 'dates', 'allEmp',
+                                'startDate', 'endDate', 'allLeave', 'allWeekend', 'allHoliday','govtHoliday'));
+                        });
+                    })->store('xls', $filePath);
+        }
+
+        // return $allEmp;
+
+
+
+        return response()->json($fileName);
+    }
+    public function finalReportSummeryWithSalary(Request $r)
+    {
+
+        $fromDate = $r->startDate;
+        $toDate = $r->endDate;
+
+
+        ini_set('max_execution_time', 0);
+
+        $startDate = Carbon::parse($fromDate);
+        $endDate = Carbon::parse($toDate);
+
+        $dates = $this->getDatesFromRange($startDate, $endDate);
+
+        $fromDate = Carbon::parse($fromDate)->subDays(1);
+        $toDate = Carbon::parse($toDate)->addDays(1);
+
+
+        $filePath = public_path() . "/exportedExcel";
+
+        $fileName = "Final_Report_1" . date("Y-m-d_H-i-s");
+        $fileInfo = array(
+            'fileName' => $fileName,
+            'filePath' => $fileName,
+        );
+
+
+
+
+        if ($r->empId) {
+
+            $govtHoliday=GovtHoliday::where('startDate','>=',$fromDate)->where('endDate','<=',$toDate)->where('status','Approved')->get();
+
+            $govtHoliday=collect($govtHoliday);
+
+            $allLeave = Leave::leftJoin('leavecategories', 'leavecategories.id', '=', 'leaves.fkLeaveCategory')
+                    ->where('applicationStatus', "Approved")
+                    ->whereIn('leaves.fkEmployeeId', $r->empId)
+                    ->whereBetween('startDate', array($fromDate, $toDate))
+                    ->get();
+
+            $allLeave = collect($allLeave);
+
+            $allWeekend = ShiftLog::whereNotNull('weekend')
+                    ->whereIn('shiftlog.fkEmployeeId', $r->empId)
+                    ->whereBetween('startDate', array($fromDate, $toDate))
+                    ->get();
+
+            $allWeekend = collect($allWeekend);
+
+            $allHoliday = ShiftLog::whereNotNull('holiday')
+                    ->whereIn('shiftlog.fkEmployeeId', $r->empId)
+                    ->whereBetween('startDate', array($fromDate, $toDate))
+                    ->get();
+
+            $allHoliday = collect($allHoliday);
+
+            $allEmp = Employee::select('employeeinfo.id', 'attemployeemap.attDeviceUserId', 'departments.departmentName',
+                DB::raw("CONCAT(COALESCE(firstName,''),' ',COALESCE(middleName,''),' ',COALESCE(lastName,'')) AS empFullname"),
+                'employeeinfo.inDeviceNo', 'employeeinfo.outDeviceNo','employeeinfo.salary','employeeinfo.pf_fund')
+                    ->leftJoin('attemployeemap', 'attemployeemap.employeeId', 'employeeinfo.id')
+                    ->leftJoin('departments', 'departments.id', 'employeeinfo.fkDepartmentId')
+                    ->whereIn('employeeinfo.id', $r->empId)
+                    ->orderBy('departments.orderBy', 'ASC')
+                    ->orderBy('employeeinfo.id', 'ASC')
+//                ->whereNotNull('employeeinfo.fkDepartmentId')
+                    ->get();
+
+            $List = implode(',', $r->empId);
+
+            $results = DB::select(DB::raw("select em.employeeId,ad.id,sl.inTime,sl.outTime,sl.adjustmentDate,ad.fkAttDevice,sl.holiday,sl.weekend,ad.fkAttDevice
+            , date_format(ad.accessTime,'%Y-%m-%d') attendanceDate
+            , date_format(ad.accessTime,'%H:%i:%s') accessTime
+            , date_format(ad.accessTime,'%Y-%m-%d %H:%i:%s') accessTime2
+            from attendancedata ad left join attemployeemap em on ad.attDeviceUserId = em.attDeviceUserId
+            and date_format(ad.accessTime,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'
+            left join shiftlog sl on em.employeeId = sl.fkemployeeId and date_format(ad.accessTime,'%Y-%m-%d') between date_format(sl.startDate,'%Y-%m-%d') and ifnull(date_format(sl.endDate,'%Y-%m-%d'),curdate())
+            left join employeeinfo emInfo on em.employeeId = emInfo.id and emInfo.fkDepartmentId is not null
+            
+            where date_format(ad.accessTime,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'
+            and emInfo.id IN (" . $List . ")"));
+
+            $results = collect($results);
+
+            $check = Excel::create($fileName, function ($excel) use ($results, $dates, $allEmp, $fromDate, $toDate, $startDate, $endDate,
+                $allLeave, $allHoliday, $allWeekend,$govtHoliday) {
+
+
+
+                        $excel->sheet('emp', function ($sheet) use ($results, $dates, $allEmp, $fromDate, $toDate, $startDate,
+                                $endDate, $allLeave, $allHoliday, $allWeekend,$govtHoliday) {
+
+                            $sheet->freezePane('C4');
+//                            $sheet->setpaperSize(5);
+//                            $sheet->setOrientation('landscape');
+                            $sheet->setStyle(array(
+                                'font' => array(
+                                    'name' => 'Calibri',
+                                    'size' => 10,
+                                    'bold' => false
+                                )
+                            ));
+
+                            $sheet->loadView('Excel.FinalReportSummeryWithSalary', compact('results', 'fromDate', 'toDate', 'dates', 'allEmp',
+                                'startDate', 'endDate', 'allLeave', 'allWeekend', 'allHoliday','govtHoliday'));
+                        });
+                    })->store('xls', $filePath);
+        } else {
+
+            $govtHoliday=GovtHoliday::where('startDate','>=',$fromDate)->where('endDate','<=',$toDate)->where('status','Approved')->get();
+
+            $govtHoliday=collect($govtHoliday);
+
+            $allLeave = Leave::leftJoin('leavecategories', 'leavecategories.id', '=', 'leaves.fkLeaveCategory')
+                    ->where('applicationStatus', "Approved")
+                    ->whereBetween('startDate', array($fromDate, $toDate))
+                    ->get();
+
+            $allLeave = collect($allLeave);
+
+            $allWeekend = ShiftLog::whereNotNull('weekend')
+                    ->whereBetween('startDate', array($fromDate, $toDate))
+                    ->get();
+
+            $allWeekend = collect($allWeekend);
+
+            $allHoliday = ShiftLog::whereNotNull('holiday')
+                    ->whereBetween('startDate', array($fromDate, $toDate))
+                    ->get();
+
+            $allHoliday = collect($allHoliday);
+
+            $allEmp = Employee::select('employeeinfo.id', 'attemployeemap.attDeviceUserId', 'departments.departmentName',
+                DB::raw("CONCAT(COALESCE(firstName,''),' ',COALESCE(middleName,''),' ',COALESCE(lastName,'')) AS empFullname"),
+                'employeeinfo.inDeviceNo', 'employeeinfo.outDeviceNo','employeeinfo.salary','employeeinfo.pf_fund')
+                    ->leftJoin('attemployeemap', 'attemployeemap.employeeId', 'employeeinfo.id')
+                    ->leftJoin('departments', 'departments.id', 'employeeinfo.fkDepartmentId')
+                    ->orderBy('departments.orderBy', 'ASC')
+                    ->orderBy('employeeinfo.id', 'ASC')
+//                ->whereNotNull('employeeinfo.fkDepartmentId')
+                    ->get();
+
+
+
+            $results = DB::select(DB::raw("select em.employeeId,ad.id,sl.inTime,sl.outTime,sl.adjustmentDate,ad.fkAttDevice,sl.holiday,sl.weekend,ad.fkAttDevice
+            , date_format(ad.accessTime,'%Y-%m-%d') attendanceDate
+            , date_format(ad.accessTime,'%H:%i:%s') accessTime
+            , date_format(ad.accessTime,'%Y-%m-%d %H:%i:%s') accessTime2
+            from attendancedata ad left join attemployeemap em on ad.attDeviceUserId = em.attDeviceUserId
+            and date_format(ad.accessTime,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'
+            left join shiftlog sl on em.employeeId = sl.fkemployeeId and date_format(ad.accessTime,'%Y-%m-%d') between date_format(sl.startDate,'%Y-%m-%d') and ifnull(date_format(sl.endDate,'%Y-%m-%d'),curdate())
+            left join employeeinfo emInfo on em.employeeId = emInfo.id and emInfo.fkDepartmentId is not null
+            
+            where date_format(ad.accessTime,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'"));
+
+            $results = collect($results);
+
+
+            $check = Excel::create($fileName, function ($excel) use ($results, $dates, $allEmp, $fromDate, $toDate, $startDate, $endDate,
+                $allLeave, $allHoliday, $allWeekend,$govtHoliday) {
+
+
+
+                        $excel->sheet('All Emp', function ($sheet) use ($results, $dates, $allEmp, $fromDate, $toDate, $startDate,
+                                $endDate, $allLeave, $allHoliday, $allWeekend,$govtHoliday) {
+
+                            $sheet->freezePane('C4');
+//                            $sheet->setpaperSize(5);
+//                            $sheet->setOrientation('landscape');
+                            $sheet->setStyle(array(
+                                'font' => array(
+                                    'name' => 'Calibri',
+                                    'size' => 10,
+                                    'bold' => false
+                                )
+                            ));
+
+                            $sheet->loadView('Excel.FinalReportSummeryWithSalary', compact('results', 'fromDate', 'toDate', 'dates', 'allEmp',
                                 'startDate', 'endDate', 'allLeave', 'allWeekend', 'allHoliday','govtHoliday'));
                         });
                     })->store('xls', $filePath);
