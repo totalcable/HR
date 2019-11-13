@@ -12,6 +12,7 @@ use App\Swap;
 use App\TimeSwap;
 use Carbon\Carbon;
 use DateTime;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -38,7 +39,8 @@ class DutyController extends Controller
             left join shiftlog sl on em.employeeId = sl.fkemployeeId and date_format(ad.accessTime,'%Y-%m-%d') between date_format(sl.startDate,'%Y-%m-%d') and ifnull(date_format(sl.endDate,'%Y-%m-%d'),curdate())
             
             
-            where  ad.attDeviceUserId='" . $r->userId . "' and ad.fkAttDevice='".$emp["inDeviceNo"]."' and date_format(ad.accessTime,'%Y-%m-%d') between '" . $currentDate . "' and '" . $currentDate . "'"));
+            where  ad.attDeviceUserId='" . $r->userId . "' and ad.fkAttDevice='".$emp["inDeviceNo"]."' and date_format(ad.accessTime,'%Y-%m-%d') between '" . $currentDate . "' and '" . $currentDate . "'
+            "));
 
 
 
@@ -51,9 +53,13 @@ class DutyController extends Controller
             left join shiftlog sl on em.employeeId = sl.fkemployeeId and date_format(ad.accessTime,'%Y-%m-%d') between date_format(sl.startDate,'%Y-%m-%d') and ifnull(date_format(sl.endDate,'%Y-%m-%d'),curdate())
             
             
-            where  ad.attDeviceUserId='" . $r->userId . "' and ad.fkAttDevice='".$emp["outDeviceNo"]."' and date_format(ad.accessTime,'%Y-%m-%d') between '" . $currentDate . "' and '" . $currentDate . "'"));
+            where  ad.attDeviceUserId='" . $r->userId . "' and ad.fkAttDevice='".$emp["outDeviceNo"]."' and date_format(ad.accessTime,'%Y-%m-%d') between '" . $currentDate . "' and '" . $currentDate . "'
+            "));
+
+        $deleteOldData=Duty::where('user_id',$r->userId)->where('date',$currentDate)->delete();
 
       foreach ($empINData as $resIN){
+
 
           try{
 
@@ -67,9 +73,7 @@ class DutyController extends Controller
               $duty->date=$currentDate;
               $duty->save();
 
-          }catch (\Exception $exception){
-
-
+          }catch (QueryException $e) {
 
           }
 
@@ -204,7 +208,7 @@ class DutyController extends Controller
 
        // $List = implode(',', $r->empId);
 
-        $empINData = DB::select(DB::raw("select em.employeeId,ad.id,sl.inTime,sl.outTime,sl.adjustmentDate,ad.device_id,sl.fkshiftId
+         $empINData = DB::select(DB::raw("select em.employeeId,ad.id,sl.inTime,sl.outTime,sl.adjustmentDate,ad.device_id,sl.fkshiftId
             , date_format(ad.date,'%Y-%m-%d') attendanceDate
             , date_format(ad.in_time,'%H:%i:%s') accessTime
             
@@ -213,7 +217,8 @@ class DutyController extends Controller
             left join shiftlog sl on em.employeeId = sl.fkemployeeId and date_format(ad.date,'%Y-%m-%d') between date_format(sl.startDate,'%Y-%m-%d') and ifnull(date_format(sl.endDate,'%Y-%m-%d'),curdate())
             
             
-            where  ad.user_id='" . $r->userId . "' and ad.device_id='".$emp["inDeviceNo"]."' and date_format(ad.date,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'"));
+            where  ad.user_id='" . $r->userId . "' and ad.device_id='".$emp["inDeviceNo"]."' and date_format(ad.date,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "' 
+            ORDER BY ad.in_time ASC"));
 
         $empINData=collect($empINData);
 
@@ -227,7 +232,8 @@ class DutyController extends Controller
             left join shiftlog sl on em.employeeId = sl.fkemployeeId and date_format(ad.date,'%Y-%m-%d') between date_format(sl.startDate,'%Y-%m-%d') and ifnull(date_format(sl.endDate,'%Y-%m-%d'),curdate())
             
             
-            where  ad.user_id='" . $r->userId . "' and ad.device_id='".$emp["outDeviceNo"]."' and date_format(ad.date,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'"));
+            where  ad.user_id='" . $r->userId . "' and ad.device_id='".$emp["outDeviceNo"]."' and date_format(ad.date,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'
+            ORDER BY ad.in_time ASC"));
 
         $empout=collect($empout);
 

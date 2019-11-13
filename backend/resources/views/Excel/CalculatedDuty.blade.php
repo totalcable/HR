@@ -53,14 +53,25 @@
     @php
     $totalIn=count($empINData);
     $totalOut=count($empout);
+
     $totalLoop=0;
-    if ($totalIn>=$totalOut){
+    if ($totalIn>$totalOut){
 
         $totalLoop=$totalOut;
+        $othersData=($totalIn-$totalOut);
+        $loop='in';
+
+    }if ($totalIn==$totalOut){
+
+        $totalLoop=$totalOut;
+        $loop='';
+
 
     }elseif ($totalIn<$totalOut){
 
         $totalLoop=$totalIn;
+        $othersData=($totalOut-$totalIn);
+        $loop='out';
     }
     $workStart=null;
     $workEnd=null;
@@ -75,6 +86,7 @@
                     $workStart=\Carbon\Carbon::parse($empINData[$i]->accessTime);
                 @endphp
                 {{$workStart->format('H:i')}}
+
             </td>
             <td class="Border"style="text-align: center;vertical-align: middle;" width="15">
                 @php
@@ -139,6 +151,63 @@
 
         </tr>
     @endfor
+    <tr>
+
+        <td class="Border"style="text-align: center;vertical-align: middle;" width="25"></td>
+        <td class="Border"style="text-align: center;vertical-align: middle;" width="15">
+
+            @if($loop=='in')
+
+
+                @for($ii=$othersData+1;$ii<$totalIn;$ii++)
+
+
+
+                {{\Carbon\Carbon::parse($empINData[$i]->accessTime)->format('H:i')}}
+
+
+
+                @endfor
+
+            @endif
+
+
+
+        </td>
+        <td class="Border"style="text-align: center;vertical-align: middle;" width="15">
+
+            @if($loop=='out')
+
+
+                @for($ii=$othersData+1;$ii<$totalOut;$ii++)
+
+
+
+                {{\Carbon\Carbon::parse($empout[$i]->accessTime)->format('H:i')}}
+
+
+
+                @endfor
+
+            @endif
+
+
+
+        </td><td class="Border"style="text-align: center;vertical-align: middle;" width="15">
+
+
+
+
+
+        </td><td class="Border"style="text-align: center;vertical-align: middle;" width="15">
+
+
+
+
+
+        </td>
+
+    </tr>
 
     </tbody>
 </table>

@@ -20,6 +20,7 @@ export class DutyComponent implements OnInit {
   dtOptions: DataTables.Settings = {};
   dtTrigger: Subject<any> = new Subject();
   dtInstance: DataTables.Api;
+  downloadVisibility: boolean;
 
   // tslint:disable-next-line:max-line-length
   constructor(private renderer: Renderer, public http: HttpClient, private token: TokenService , public route: ActivatedRoute, private router: Router
@@ -27,6 +28,7 @@ export class DutyComponent implements OnInit {
 
   ngOnInit() {
     this.getData();
+    this.downloadVisibility = false;
   }
 
   getData() {
@@ -106,6 +108,8 @@ export class DutyComponent implements OnInit {
       return false;
     } else {
 
+      this.downloadVisibility = true;
+
       const form = {
         userId: id,
         date: $('#date').val(),
@@ -114,14 +118,17 @@ export class DutyComponent implements OnInit {
       };
 
       const token = this.token.get();
-     this.spinner.show();
+    // this.spinner.show();
 
       this.http.post(Constants.API_URL + 'duty/calculateDuty' + '?token=' + token, form).subscribe(data => {
 
-      //  console.log(data);
-
           this.spinner.hide();
 
+      //  console.log(data);
+
+
+
+          //
           this.ngOnInit();
           this.rerender();
 
@@ -146,11 +153,17 @@ export class DutyComponent implements OnInit {
 
     }
 
+    //console.log(this.downloadVisibility);
+
 
 
 
   }
   download(id) {
+
+    const that = this;
+
+    console.log(that.downloadVisibility);
 
     if (!this.checkForm()) {
       return false;
@@ -170,6 +183,7 @@ export class DutyComponent implements OnInit {
 
           this.spinner.hide();
        // console.log(data);
+          this.downloadVisibility = false;
 
           const fileName = Constants.Image_URL + 'exportedExcel/' + data;
 
@@ -217,6 +231,7 @@ export class DutyComponent implements OnInit {
       condition = false;
       message = 'Please Select a date to calculate';
     }
+
 
     if (condition == false) {
       $.alert({
