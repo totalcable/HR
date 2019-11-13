@@ -47,7 +47,8 @@ export class DutyComponent implements OnInit {
 
         {
           'data': function (data: any, type: any, full: any) {
-            return ' <button class="btn btn-info" data-empUser-id="' + data.attDeviceUserId + '"> Calculate</button>';
+            // tslint:disable-next-line:max-line-length
+            return ' <button class="btn btn-info" data-empUser-id="' + data.attDeviceUserId + '"> Calculate</button>&nbsp;&nbsp;<button class="btn btn-info" data-user-id="' + data.attDeviceUserId + '"> Download</button>';
           },
           'orderable': false, 'searchable': false, 'name': 'selected_rows'
         }
@@ -72,6 +73,11 @@ export class DutyComponent implements OnInit {
 
         const id = event.target.getAttribute('data-empUser-id');
         this.calculate(id);
+      }
+      if (event.target.hasAttribute('data-user-id')) {
+
+        const id = event.target.getAttribute('data-user-id');
+        this.download(id);
       }
 
 
@@ -108,30 +114,30 @@ export class DutyComponent implements OnInit {
       };
 
       const token = this.token.get();
-     // this.spinner.show();
+     this.spinner.show();
 
       this.http.post(Constants.API_URL + 'duty/calculateDuty' + '?token=' + token, form).subscribe(data => {
 
-        console.log(data);
+      //  console.log(data);
 
-          // this.spinner.hide();
-          //
-          // this.ngOnInit();
-          // this.rerender();
-          //
-          // $.alert({
-          //   title: 'Success!',
-          //   type: 'Green',
-          //   content: 'Duty added successfully',
-          //   buttons: {
-          //     tryAgain: {
-          //       text: 'Ok',
-          //       btnClass: 'btn-red',
-          //       action: function () {
-          //       }
-          //     }
-          //   }
-          // });
+          this.spinner.hide();
+
+          this.ngOnInit();
+          this.rerender();
+
+          $.alert({
+            title: 'Success!',
+            type: 'Green',
+            content: 'Duty added successfully',
+            buttons: {
+              tryAgain: {
+                text: 'Ok',
+                btnClass: 'btn-red',
+                action: function () {
+                }
+              }
+            }
+          });
         },
         error => {
           console.log(error);
@@ -142,6 +148,65 @@ export class DutyComponent implements OnInit {
 
 
 
+
+  }
+  download(id) {
+
+    if (!this.checkForm()) {
+      return false;
+    } else {
+
+      const form = {
+        userId: id,
+        date: $('#date').val(),
+
+
+      };
+
+      const token = this.token.get();
+      this.spinner.show();
+
+      this.http.post(Constants.API_URL + 'duty/download' + '?token=' + token, form).subscribe(data => {
+
+          this.spinner.hide();
+       // console.log(data);
+
+          const fileName = Constants.Image_URL + 'exportedExcel/' + data;
+
+          const link = document.createElement('a');
+          link.download = data + '.xls';
+          const uri = fileName + '.xls';
+          link.href = uri;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          $('#excelType').val('');
+
+
+          /* delete the server file */
+
+          const fileinfo = {
+            'filePath': 'exportedExcel/',
+            'fileName': data + '.xls',
+          };
+
+          this.http.post(Constants.API_URL + 'deleteFile' + '?token=' + token, fileinfo).subscribe(data => {
+
+              //  console.log(data);
+
+
+            },
+            error => {
+              console.log(error);
+            }
+          );
+        },
+        error => {
+          console.log(error);
+        }
+      );
+
+    }
 
   }
   checkForm() {

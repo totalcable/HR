@@ -257,6 +257,7 @@ Route::group([
     /* duty */
 
     Route::post('duty/calculateDuty','DutyController@calculateDutyFromAttendance');
+    Route::post('duty/download','DutyController@calculateDutyAndDownload');
 
 
 
