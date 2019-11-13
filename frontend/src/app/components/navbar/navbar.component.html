@@ -116,7 +116,7 @@
             <a ><i class="ti-home"></i>User</a>
             <ul class="submenu">
               <li class="has-submenu">
-                <a href="#">Employee</a>
+                <a style="cursor: pointer">Employee</a>
                 <ul class="submenu">
                   <li><a routerLink="employee" >Employee</a></li>
                   <!--                  <li><a routerLink="employee/past">Past Employee</a></li>-->
@@ -127,10 +127,10 @@
           </li>
 
           <li class="has-submenu" *ngxPermissionsOnly="['admin']" routerLinkActive="active">
-            <a href="#"><i class="ti-bookmark-alt"></i>Settings</a>
+            <a style="cursor: pointer"><i class="ti-bookmark-alt"></i>Settings</a>
             <ul class="submenu">
               <li class="has-submenu">
-                <a href="#">Roster</a>
+                <a style="cursor: pointer">Roster</a>
                 <ul class="submenu">
                   <li><a routerLink="configuration/shift">All Roster</a></li>
 <!--                  <li><a routerLink="configuration/shift/assign">Shift Roster</a></li>-->
@@ -145,21 +145,21 @@
               <li *ngxPermissionsOnly="['admin']" routerLinkActive="active"><a routerLink="configuration/punch-time/edit">Punch Time Customaization</a></li>
 
               <li class="has-submenu" *ngxPermissionsOnly="['admin']">
-                <a href="#">Department</a>
+                <a style="cursor: pointer">Department</a>
                 <ul class="submenu">
                   <li><a routerLink="configuration/department/add">Add Department</a></li>
                 </ul>
               </li>
 
               <li class="has-submenu" *ngxPermissionsOnly="['admin']">
-                <a href="#">Email</a>
+                <a style="cursor: pointer">Email</a>
                 <ul class="submenu">
                   <li><a routerLink="configuration/email/add">Add Email</a></li>
                 </ul>
               </li>
 
               <li class="has-submenu" *ngxPermissionsOnly="['admin']">
-                <a href="#">Designation</a>
+                <a style="cursor: pointer">Designation</a>
                 <ul class="submenu">
                   <li><a routerLink="configuration/designation/add">Add Designation</a></li>
 
@@ -180,7 +180,7 @@
 
 
           <li class="has-submenu" *ngxPermissionsOnly="['admin']" routerLinkActive="active">
-            <a href="#"><i class="fa fa-chart"></i>Report</a>
+            <a style="cursor: pointer"><i class="fa fa-chart"></i>Report</a>
             <ul class="submenu">
               <li class="">
                 <a routerLink="report/attendance">Attendance</a>
@@ -190,7 +190,7 @@
           </li>
 
           <li  class="has-submenu">
-            <a href="#">Leave</a>
+            <a style="cursor: pointer">Leave</a>
             <ul class="submenu">
               <li><a *ngxPermissionsExcept="['admin']" routerLink="leave/apply" >Apply Leave</a></li>
               <li><a routerLink="configuration/leave" *ngxPermissionsOnly="['admin']">Create Leave</a></li>
@@ -200,7 +200,7 @@
             </ul>
           </li>
           <li class="has-submenu">
-            <a href="#">Govt Holiday</a>
+            <a style="cursor: pointer">Govt Holiday</a>
             <ul class="submenu">
 <!--              <li><a routerLink="leave/apply">Apply Leave</a></li>-->
 <!--              <li><a routerLink="configuration/govtHoliday" *ngxPermissionsOnly="['admin']">Create Holiday</a></li>-->
@@ -210,7 +210,7 @@
           </li>
 
           <li *ngxPermissionsOnly="['admin']" class="has-submenu">
-            <a >Adjustment</a>
+            <a style="cursor: pointer">Adjustment</a>
             <ul class="submenu">
               <li><a routerLink="adjustment/showAdjustment">Show Adjustment</a></li>
 
@@ -218,7 +218,7 @@
           </li>
 
           <li class="has-submenu">
-            <a >Swap</a>
+            <a style="cursor: pointer">Swap</a>
             <ul class="submenu">
               <li><a *ngxPermissionsOnly="['admin','Manager','Hr']"  routerLink="swap/showSwap">Show Swap</a></li>
               <li><a *ngxPermissionsOnly="['admin','Manager','Hr']"  routerLink="swap/showTimeSwap">Show Time Swap</a></li>

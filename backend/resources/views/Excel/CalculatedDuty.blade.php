@@ -127,6 +127,14 @@
 
             </td>
 
+            @php
+                $workStart=null;
+                $workEnd=null;
+                $FINALWORKINGHOUR=null;
+                $ROUNDFINALWORKINGHOUR=null;
+
+            @endphp
+
 
 
         </tr>
