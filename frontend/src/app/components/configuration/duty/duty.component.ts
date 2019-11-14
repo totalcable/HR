@@ -50,7 +50,8 @@ export class DutyComponent implements OnInit {
         {
           'data': function (data: any, type: any, full: any) {
             // tslint:disable-next-line:max-line-length
-            return ' <button class="btn btn-info" data-empUser-id="' + data.attDeviceUserId + '"> Calculate</button>&nbsp;&nbsp;<button class="btn btn-info" data-user-id="' + data.attDeviceUserId + '"> Download</button>';
+            return ' <button class="btn btn-info" data-empUser-id="' + data.attDeviceUserId + '"> Calculate</button>&nbsp;&nbsp;' +
+              '<button style="visibility: hidden" class="btn btn-info" id="download' + data.attDeviceUserId + '" data-user-id="' + data.attDeviceUserId + '"> Download</button>';
           },
           'orderable': false, 'searchable': false, 'name': 'selected_rows'
         }
@@ -108,11 +109,12 @@ export class DutyComponent implements OnInit {
       return false;
     } else {
 
-      this.downloadVisibility = true;
+
 
       const form = {
         userId: id,
-        date: $('#date').val(),
+        fromDate: $('#startDate').val(),
+        toDate: $('#endDate').val(),
 
 
       };
@@ -122,15 +124,13 @@ export class DutyComponent implements OnInit {
 
       this.http.post(Constants.API_URL + 'duty/calculateDuty' + '?token=' + token, form).subscribe(data => {
 
-          this.spinner.hide();
+        //  this.spinner.hide();
 
-      //  console.log(data);
+       // console.log(data);
+        $('#download' + id).css('visibility', 'visible');
 
-
-
-          //
-          this.ngOnInit();
-          this.rerender();
+         // this.ngOnInit();
+         // this.rerender();
 
           $.alert({
             title: 'Success!',
@@ -161,9 +161,9 @@ export class DutyComponent implements OnInit {
   }
   download(id) {
 
-    const that = this;
+   // const that = this;
 
-    console.log(that.downloadVisibility);
+    console.log(this.downloadVisibility);
 
     if (!this.checkForm()) {
       return false;
@@ -171,17 +171,18 @@ export class DutyComponent implements OnInit {
 
       const form = {
         userId: id,
-        date: $('#date').val(),
+        fromDate: $('#startDate').val(),
+        toDate: $('#endDate').val(),
 
 
       };
 
       const token = this.token.get();
-      this.spinner.show();
+     // this.spinner.show();
 
       this.http.post(Constants.API_URL + 'duty/download' + '?token=' + token, form).subscribe(data => {
 
-          this.spinner.hide();
+      //    this.spinner.hide();
        // console.log(data);
           this.downloadVisibility = false;
 
@@ -195,6 +196,9 @@ export class DutyComponent implements OnInit {
           link.click();
           document.body.removeChild(link);
           $('#excelType').val('');
+
+          this.ngOnInit();
+          this.rerender();
 
 
           /* delete the server file */
@@ -227,9 +231,13 @@ export class DutyComponent implements OnInit {
 
     let message = '';
     let condition = true;
-    if ($('#date').val() == '') {
+    if ($('#startDate').val() == '') {
       condition = false;
-      message = 'Please Select a date to calculate';
+      message = 'Please Select a start date to calculate';
+    }
+    if ($('#endDate').val() == '') {
+      condition = false;
+      message = 'Please Select a end date to calculate';
     }
 
 
@@ -254,5 +262,14 @@ export class DutyComponent implements OnInit {
     return true;
 
   }
+  togolDownload() {
+    if (this.downloadVisibility === true) {
+      this.downloadVisibility = false;
+    } else {
+      this.downloadVisibility = true;
+    }
+    console.log(this.downloadVisibility);
+  }
+
 
 }

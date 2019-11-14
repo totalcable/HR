@@ -27,19 +27,24 @@ class DutyController extends Controller
         $emp=Employee::select('inDeviceNo','outDeviceNo')->leftjoin('attemployeemap','attemployeemap.employeeId','employeeinfo.id')
             ->where('attemployeemap.attDeviceUserId',$r->userId)->first();
 
-        $currentDate = Carbon::parse($r->date)->format('Y-m-d');
+//        $currentDate = Carbon::parse($r->date)->format('Y-m-d');
 
 
-        $empINData = DB::select(DB::raw("select em.employeeId,ad.id,sl.inTime,sl.outTime,sl.adjustmentDate,ad.fkAttDevice,sl.holiday,sl.weekend,ad.fkAttDevice,sl.fkshiftId
+
+        $fromDate = Carbon::parse($r->fromDate)->format('Y-m-d');
+        $toDate = Carbon::parse($r->toDate)->format('Y-m-d');
+
+
+         $empINData = DB::select(DB::raw("select em.employeeId,ad.id,sl.inTime,sl.outTime,sl.adjustmentDate,ad.fkAttDevice,sl.holiday,sl.weekend,ad.fkAttDevice,sl.fkshiftId
             , date_format(ad.accessTime,'%Y-%m-%d') attendanceDate
             , date_format(ad.accessTime,'%H:%i:%s') accessTime
             , date_format(ad.accessTime,'%Y-%m-%d %H:%i:%s') accessTime2
             from attendancedata ad left join attemployeemap em on ad.attDeviceUserId = em.attDeviceUserId
-            and date_format(ad.accessTime,'%Y-%m-%d') between '" . $currentDate . "' and '" . $currentDate . "'
+            and date_format(ad.accessTime,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'
             left join shiftlog sl on em.employeeId = sl.fkemployeeId and date_format(ad.accessTime,'%Y-%m-%d') between date_format(sl.startDate,'%Y-%m-%d') and ifnull(date_format(sl.endDate,'%Y-%m-%d'),curdate())
             
             
-            where  ad.attDeviceUserId='" . $r->userId . "' and ad.fkAttDevice='".$emp["inDeviceNo"]."' and date_format(ad.accessTime,'%Y-%m-%d') between '" . $currentDate . "' and '" . $currentDate . "'
+            where  ad.attDeviceUserId='" . $r->userId . "' and ad.fkAttDevice='".$emp["inDeviceNo"]."' and date_format(ad.accessTime,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'
             "));
 
 
@@ -49,14 +54,20 @@ class DutyController extends Controller
             , date_format(ad.accessTime,'%H:%i:%s') accessTime
             , date_format(ad.accessTime,'%Y-%m-%d %H:%i:%s') accessTime2
             from attendancedata ad left join attemployeemap em on ad.attDeviceUserId = em.attDeviceUserId
-            and date_format(ad.accessTime,'%Y-%m-%d') between '" . $currentDate . "' and '" . $currentDate . "'
+            and date_format(ad.accessTime,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'
             left join shiftlog sl on em.employeeId = sl.fkemployeeId and date_format(ad.accessTime,'%Y-%m-%d') between date_format(sl.startDate,'%Y-%m-%d') and ifnull(date_format(sl.endDate,'%Y-%m-%d'),curdate())
             
             
-            where  ad.attDeviceUserId='" . $r->userId . "' and ad.fkAttDevice='".$emp["outDeviceNo"]."' and date_format(ad.accessTime,'%Y-%m-%d') between '" . $currentDate . "' and '" . $currentDate . "'
+            where  ad.attDeviceUserId='" . $r->userId . "' and ad.fkAttDevice='".$emp["outDeviceNo"]."' and date_format(ad.accessTime,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'
             "));
 
-        $deleteOldData=Duty::where('user_id',$r->userId)->where('date',$currentDate)->delete();
+        $deleteOldData=Duty::where('user_id',$r->userId)
+            ->where(function ($query) use($fromDate,$toDate){
+                $query->where('date', '>=', $fromDate)
+                    ->orWhere('date', '<=', $toDate);
+            })
+//            ->where('date',$currentDate)
+            ->delete();
 
       foreach ($empINData as $resIN){
 
@@ -70,7 +81,7 @@ class DutyController extends Controller
               $duty->shift=$resIN->fkshiftId;
 
               $duty->device_id=$resIN->fkAttDevice;
-              $duty->date=$currentDate;
+              $duty->date=$resIN->attendanceDate;
               $duty->save();
 
           }catch (QueryException $e) {
@@ -91,7 +102,7 @@ class DutyController extends Controller
               $duty->out_time=$resOut->accessTime;
               $duty->shift=$resOut->fkshiftId;
               $duty->device_id=$resOut->fkAttDevice;
-              $duty->date=$currentDate;
+              $duty->date=$resOut->attendanceDate;
               $duty->save();
 
           }catch (\Exception $exception){
@@ -127,16 +138,23 @@ class DutyController extends Controller
     public function calculateDutyAndDownload(Request $r){
 
         ini_set('max_execution_time', 0);
+
         $emp=Employee::select('inDeviceNo','outDeviceNo','attemployeemap.employeeId')->leftjoin('attemployeemap','attemployeemap.employeeId','employeeinfo.id')
             ->where('attemployeemap.attDeviceUserId',$r->userId)->first();
 
-        $currentDate = Carbon::parse($r->date)->format('Y-m-d');
+       // $currentDate = Carbon::parse($r->date)->format('Y-m-d');
 
-        $startDate = Carbon::parse($currentDate);
-        $endDate = Carbon::parse($currentDate);
+        $startDate = Carbon::parse($r->fromDate);
+        $endDate = Carbon::parse($r->toDate);
 
-        $fromDate = Carbon::parse($currentDate)->subDays(1);
-        $toDate = Carbon::parse($currentDate)->addDays(1);
+
+        $fromDate = Carbon::parse($r->fromDate)->subDays(1);
+        $toDate = Carbon::parse($r->toDate)->addDays(1);
+
+
+
+//        $fromDate = Carbon::parse($currentDate)->subDays(1);
+//        $toDate = Carbon::parse($currentDate)->addDays(1);
 
         $dates = $this->getDatesFromRange($startDate, $endDate);
 
@@ -195,7 +213,7 @@ class DutyController extends Controller
 
         $govtHoliday=collect($govtHoliday);
 
-        $allEmp = Employee::select('employeeinfo.id', 'attemployeemap.attDeviceUserId', 'departments.departmentName','designations.title as designationTitle',
+         $allEmp = Employee::select('employeeinfo.id', 'attemployeemap.attDeviceUserId', 'departments.departmentName','designations.title as designationTitle',
             DB::raw("CONCAT(COALESCE(firstName,''),' ',COALESCE(middleName,''),' ',COALESCE(lastName,'')) AS empFullname"), 'employeeinfo.inDeviceNo', 'employeeinfo.outDeviceNo')
             ->leftJoin('attemployeemap', 'attemployeemap.employeeId', 'employeeinfo.id')
             ->leftJoin('departments', 'departments.id', 'employeeinfo.fkDepartmentId')
@@ -208,7 +226,10 @@ class DutyController extends Controller
 
        // $List = implode(',', $r->empId);
 
-         $empINData = DB::select(DB::raw("select em.employeeId,ad.id,sl.inTime,sl.outTime,sl.adjustmentDate,ad.device_id,sl.fkshiftId
+
+        if ($startDate==$endDate){
+
+            $empINData = DB::select(DB::raw("select em.employeeId,ad.id,sl.inTime,sl.outTime,sl.adjustmentDate,ad.device_id,sl.fkshiftId
             , date_format(ad.date,'%Y-%m-%d') attendanceDate
             , date_format(ad.in_time,'%H:%i:%s') accessTime
             
@@ -220,10 +241,10 @@ class DutyController extends Controller
             where  ad.user_id='" . $r->userId . "' and ad.device_id='".$emp["inDeviceNo"]."' and date_format(ad.date,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "' 
             ORDER BY ad.in_time ASC"));
 
-        $empINData=collect($empINData);
+            $empINData=collect($empINData);
 
 
-        $empout = DB::select(DB::raw("select em.employeeId,ad.id,sl.inTime,sl.outTime,sl.adjustmentDate,ad.device_id,sl.fkshiftId
+            $empout = DB::select(DB::raw("select em.employeeId,ad.id,sl.inTime,sl.outTime,sl.adjustmentDate,ad.device_id,sl.fkshiftId
             , date_format(ad.date,'%Y-%m-%d') attendanceDate
             , date_format(ad.out_time,'%H:%i:%s') accessTime
             
@@ -235,33 +256,98 @@ class DutyController extends Controller
             where  ad.user_id='" . $r->userId . "' and ad.device_id='".$emp["outDeviceNo"]."' and date_format(ad.date,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'
             ORDER BY ad.in_time ASC"));
 
-        $empout=collect($empout);
+            $empout=collect($empout);
+
+        }else{
+
+            $empINData = DB::select(DB::raw("select em.employeeId,ad.id,sl.inTime,sl.outTime,sl.adjustmentDate,ad.device_id,sl.fkshiftId
+            , date_format(ad.date,'%Y-%m-%d') attendanceDate
+            , date_format(ad.in_time,'%H:%i:%s') accessTime
+            
+            from duty ad left join attemployeemap em on ad.user_id = em.attDeviceUserId
+            and date_format(ad.date,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'
+            left join shiftlog sl on em.employeeId = sl.fkemployeeId and date_format(ad.date,'%Y-%m-%d') between date_format(sl.startDate,'%Y-%m-%d') and ifnull(date_format(sl.endDate,'%Y-%m-%d'),curdate())
+            
+            
+            where  ad.user_id='" . $r->userId . "' and ad.device_id='".$emp["inDeviceNo"]."' and date_format(ad.date,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "' 
+            ORDER BY ad.in_time ASC"));
+
+            $empINData=collect($empINData);
 
 
-        $check = Excel::create($fileName, function ($excel) use ($empINData,$empout, $dates, $allEmp, $fromDate, $toDate, $startDate, $endDate, $allLeave, $allHoliday,
-            $allWeekend,$govtHoliday,$allTimeSwap,$dutySwap) {
+            $empout = DB::select(DB::raw("select em.employeeId,ad.id,sl.inTime,sl.outTime,sl.adjustmentDate,ad.device_id,sl.fkshiftId
+            , date_format(ad.date,'%Y-%m-%d') attendanceDate
+            , date_format(ad.out_time,'%H:%i:%s') accessTime
+            
+            from duty ad left join attemployeemap em on ad.user_id = em.attDeviceUserId
+            and date_format(ad.date,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'
+            left join shiftlog sl on em.employeeId = sl.fkemployeeId and date_format(ad.date,'%Y-%m-%d') between date_format(sl.startDate,'%Y-%m-%d') and ifnull(date_format(sl.endDate,'%Y-%m-%d'),curdate())
+            
+            
+            where  ad.user_id='" . $r->userId . "' and ad.device_id='".$emp["outDeviceNo"]."' and date_format(ad.date,'%Y-%m-%d') between '" . $fromDate . "' and '" . $toDate . "'
+            ORDER BY ad.in_time ASC"));
 
-            foreach ($allEmp as $allE) {
+            $empout=collect($empout);
 
-                $excel->sheet($allE->attDeviceUserId, function ($sheet) use ($empINData,$empout, $allE, $dates, $allEmp, $fromDate, $toDate, $startDate,
-                    $endDate, $allLeave, $allHoliday, $allWeekend,$govtHoliday,$allTimeSwap,$dutySwap) {
-
-                    $sheet->freezePane('B5');
+        }
 
 
-                    $sheet->setStyle(array(
-                        'font' => array(
-                            'name' => 'Calibri',
-                            'size' => 10,
-                            'bold' => false
-                        )
-                    ));
+        if ($startDate==$endDate){
 
-                    $sheet->loadView('Excel.CalculatedDuty', compact('empINData','empout', 'allE', 'fromDate', 'toDate', 'dates', 'allEmp',
-                        'startDate', 'endDate', 'allLeave', 'allWeekend', 'allHoliday','govtHoliday','allTimeSwap','dutySwap'));
-                });
-            }
-        })->store('xls', $filePath);
+            $check = Excel::create($fileName, function ($excel) use ($empINData,$empout, $dates, $allEmp, $fromDate, $toDate, $startDate, $endDate, $allLeave, $allHoliday,
+                $allWeekend,$govtHoliday,$allTimeSwap,$dutySwap) {
+
+                foreach ($allEmp as $allE) {
+
+                    $excel->sheet($allE->attDeviceUserId, function ($sheet) use ($empINData,$empout, $allE, $dates, $allEmp, $fromDate, $toDate, $startDate,
+                        $endDate, $allLeave, $allHoliday, $allWeekend,$govtHoliday,$allTimeSwap,$dutySwap) {
+
+                        $sheet->freezePane('B5');
+
+
+                        $sheet->setStyle(array(
+                            'font' => array(
+                                'name' => 'Calibri',
+                                'size' => 10,
+                                'bold' => false
+                            )
+                        ));
+
+                        $sheet->loadView('Excel.CalculatedDuty', compact('empINData','empout', 'allE', 'fromDate', 'toDate', 'dates', 'allEmp',
+                            'startDate', 'endDate', 'allLeave', 'allWeekend', 'allHoliday','govtHoliday','allTimeSwap','dutySwap'));
+                    });
+                }
+            })->store('xls', $filePath);
+
+        }else{
+
+            $check = Excel::create($fileName, function ($excel) use ($empINData,$empout, $dates, $allEmp, $fromDate, $toDate, $startDate, $endDate, $allLeave, $allHoliday,
+                $allWeekend,$govtHoliday,$allTimeSwap,$dutySwap) {
+
+                foreach ($dates as $ad) {
+
+                    $excel->sheet($ad['date'], function ($sheet) use ($empINData,$empout, $ad, $dates, $allEmp, $fromDate, $toDate, $startDate,
+                        $endDate, $allLeave, $allHoliday, $allWeekend,$govtHoliday,$allTimeSwap,$dutySwap) {
+
+                        $sheet->freezePane('B5');
+
+
+                        $sheet->setStyle(array(
+                            'font' => array(
+                                'name' => 'Calibri',
+                                'size' => 10,
+                                'bold' => false
+                            )
+                        ));
+
+                        $sheet->loadView('Excel.CalculatedDutyDateperSheet', compact('empINData','empout','ad', 'fromDate', 'toDate', 'dates', 'allEmp',
+                            'startDate', 'endDate', 'allLeave', 'allWeekend', 'allHoliday','govtHoliday','allTimeSwap','dutySwap'));
+                    });
+                }
+            })->store('xls', $filePath);
+
+        }
+
 
         return response()->json($fileName);
 

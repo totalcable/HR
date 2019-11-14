@@ -1,4 +1,3 @@
-
 <html>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -51,32 +50,25 @@
     </thead>
     <tbody>
     @php
-    $totalIn=count($empINData);
-    $totalOut=count($empout);
-
-    $totalLoop=0;
-    if ($totalIn>$totalOut){
-
-        $totalLoop=$totalOut;
-        $othersData=($totalIn-$totalOut);
-        $loop='in';
-
-    }if ($totalIn==$totalOut){
-
-        $totalLoop=$totalOut;
-        $loop='';
-
-
-    }elseif ($totalIn<$totalOut){
-
-        $totalLoop=$totalIn;
-        $othersData=($totalOut-$totalIn);
-        $loop='out';
-    }
-    $workStart=null;
-    $workEnd=null;
-    $FINALWORKINGHOUR=null;
-    $ROUNDFINALWORKINGHOUR=null;
+        $totalIn=count($empINData);
+        $totalOut=count($empout);
+        $totalLoop=0;
+        if ($totalIn>$totalOut){
+            $totalLoop=$totalOut;
+            $othersData=($totalIn-$totalOut);
+            $loop='in';
+        }if ($totalIn==$totalOut){
+            $totalLoop=$totalOut;
+            $loop='';
+        }elseif ($totalIn<$totalOut){
+            $totalLoop=$totalIn;
+            $othersData=($totalOut-$totalIn);
+            $loop='out';
+        }
+        $workStart=null;
+        $workEnd=null;
+        $FINALWORKINGHOUR=null;
+        $ROUNDFINALWORKINGHOUR=null;
     @endphp
     @for($i=0;$i<$totalLoop;$i++)
         <tr>
@@ -100,7 +92,6 @@
                 @if($workStart!=null && $workEnd != null)
                     @php
                         $FINALWORKINGHOUR=$workEnd->diff($workStart);
-
                     @endphp
 
                     {{$FINALWORKINGHOUR->format('%H:%i')}}
@@ -120,15 +111,12 @@
                         @php
                             $ROUNDFINALWORKINGHOUR->minute(0);
                             $ROUNDFINALWORKINGHOUR->addHour();
-
                         @endphp
 
                     @else
 
                         @php
                             $ROUNDFINALWORKINGHOUR->minute(0);
-
-
                         @endphp
 
                     @endif
@@ -144,7 +132,6 @@
                 $workEnd=null;
                 $FINALWORKINGHOUR=null;
                 $ROUNDFINALWORKINGHOUR=null;
-
             @endphp
 
 
@@ -163,7 +150,7 @@
 
 
 
-                {{\Carbon\Carbon::parse($empINData[$i]->accessTime)->format('H:i')}}
+                    {{\Carbon\Carbon::parse($empINData[$i]->accessTime)->format('H:i')}}
 
 
 
@@ -183,7 +170,7 @@
 
 
 
-                {{\Carbon\Carbon::parse($empout[$i]->accessTime)->format('H:i')}}
+                    {{\Carbon\Carbon::parse($empout[$i]->accessTime)->format('H:i')}}
 
 
 
